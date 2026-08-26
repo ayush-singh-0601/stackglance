@@ -1,4 +1,6 @@
 import { version } from "../meta.js";
+import { initialize } from "./commands/init.js";
+import { createCliContext, type CliContext } from "./context.js";
 
 export interface CliWriter {
   write(chunk: string): unknown;
@@ -35,19 +37,25 @@ Options:
   -v, --version    Show version
 `;
 
-export function runCli(args: readonly string[], io: CliIo): Promise<number> {
+export async function runCli(
+  args: readonly string[],
+  io: CliIo,
+  context: CliContext = createCliContext(),
+): Promise<number> {
   const [command] = args;
 
   if (command === "--version" || command === "-v") {
     io.stdout.write(`${version}\n`);
-    return Promise.resolve(0);
+    return 0;
   }
 
   if (command === undefined || command === "--help" || command === "-h" || command === "help") {
     io.stdout.write(HELP);
-    return Promise.resolve(0);
+    return 0;
   }
 
+  if (command === "init") return initialize(context.paths, io);
+
   io.stderr.write(`Unknown command: ${command}\nRun devradar --help for usage.\n`);
-  return Promise.resolve(2);
+  return 2;
 }
