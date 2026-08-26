@@ -1,4 +1,5 @@
 import { version } from "../meta.js";
+import { setGlobalEnabled, showStatus } from "./commands/controls.js";
 import { initialize } from "./commands/init.js";
 import { createCliContext, type CliContext } from "./context.js";
 
@@ -55,6 +56,9 @@ export async function runCli(
   }
 
   if (command === "init") return initialize(context.paths, io);
+  if (command === "enable") return setGlobalEnabled(true, context, io);
+  if (command === "disable") return setGlobalEnabled(false, context, io);
+  if (command === "status") return showStatus(context, io);
 
   io.stderr.write(`Unknown command: ${command}\nRun devradar --help for usage.\n`);
   return 2;
