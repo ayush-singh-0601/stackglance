@@ -51,6 +51,20 @@ export interface RawStory {
   metadata?: Readonly<Record<string, string | number | boolean>>;
 }
 
+export interface StoryCandidate {
+  id: string;
+  source: string;
+  sourceId: string;
+  url: string;
+  title: string;
+  body: string;
+  category: Category;
+  publishedAt: string;
+  expiresAt: string;
+  tags: readonly string[];
+  metadata: Readonly<Record<string, string | number | boolean>>;
+}
+
 export interface Story {
   id: string;
   source: string;

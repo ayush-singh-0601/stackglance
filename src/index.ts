@@ -21,6 +21,7 @@ export { rotationAt } from "./runtime/rotation.js";
 export type { RotationSlot } from "./runtime/rotation.js";
 export { detectRepository, findRepositoryRoot } from "./intelligence/repository.js";
 export { extractTaskTags } from "./intelligence/task-tags.js";
+export { normalizeStories } from "./intelligence/normalize.js";
 export type { TaskTags } from "./intelligence/task-tags.js";
 export { isPublicIp, safeFetchText, validateRemoteUrl } from "./feeds/safe-fetch.js";
 export type { AddressResolver, ResolvedAddress, SafeFetchOptions, SafeResponse } from "./feeds/safe-fetch.js";
@@ -44,4 +45,5 @@ export type {
   RawStory,
   RepositoryContext,
   Story,
+  StoryCandidate,
 } from "./core/types.js";
