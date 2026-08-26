@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 
 import { describe, expect, it } from "vitest";
 
-import { setGlobalEnabled } from "../src/cli/commands/controls.js";
+import { setAgentEnabled, setGlobalEnabled } from "../src/cli/commands/controls.js";
 import type { CliContext } from "../src/cli/context.js";
 import { loadConfig } from "../src/config/store.js";
 import { resolvePaths } from "../src/core/paths.js";
@@ -19,5 +19,15 @@ describe("persistent controls", () => {
     await setGlobalEnabled(false, context, io);
     expect((await loadConfig(context.paths.config)).enabled).toBe(false);
     expect(text.join(" ")).toContain("disabled");
+  });
+
+  it("changes one agent without changing the global preference", async () => {
+    const root = await mkdtemp(`${tmpdir()}\\devradar-agent-controls-`);
+    const context: CliContext = { paths: resolvePaths({ env: { DEVRADAR_HOME: root } }), now: () => new Date() };
+    const io = { stdout: { write: () => undefined }, stderr: { write: () => undefined } };
+    await setAgentEnabled("gemini", false, context, io);
+    const config = await loadConfig(context.paths.config);
+    expect(config.enabled).toBe(false);
+    expect(config.agents).toMatchObject({ gemini: false, codex: true });
   });
 });

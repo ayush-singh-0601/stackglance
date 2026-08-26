@@ -1,5 +1,6 @@
+import { AGENTS, type AgentName } from "../core/types.js";
 import { version } from "../meta.js";
-import { setGlobalEnabled, showStatus } from "./commands/controls.js";
+import { setAgentEnabled, setGlobalEnabled, showStatus } from "./commands/controls.js";
 import { initialize } from "./commands/init.js";
 import { createCliContext, type CliContext } from "./context.js";
 
@@ -56,8 +57,18 @@ export async function runCli(
   }
 
   if (command === "init") return initialize(context.paths, io);
-  if (command === "enable") return setGlobalEnabled(true, context, io);
-  if (command === "disable") return setGlobalEnabled(false, context, io);
+  if (command === "enable" || command === "disable") {
+    const agentIndex = args.indexOf("--agent");
+    if (agentIndex >= 0) {
+      const agent = args[agentIndex + 1];
+      if (agent === undefined || !AGENTS.includes(agent as AgentName)) {
+        io.stderr.write(`Invalid agent. Expected one of: ${AGENTS.join(", ")}\n`);
+        return 2;
+      }
+      return setAgentEnabled(agent as AgentName, command === "enable", context, io);
+    }
+    return setGlobalEnabled(command === "enable", context, io);
+  }
   if (command === "status") return showStatus(context, io);
 
   io.stderr.write(`Unknown command: ${command}\nRun devradar --help for usage.\n`);

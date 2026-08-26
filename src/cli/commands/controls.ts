@@ -10,6 +10,20 @@ export async function setGlobalEnabled(enabled: boolean, context: CliContext, io
   return 0;
 }
 
+export async function setAgentEnabled(
+  agent: AgentName,
+  enabled: boolean,
+  context: CliContext,
+  io: CliIo,
+): Promise<number> {
+  await updateConfig(context.paths.config, (config) => ({
+    ...config,
+    agents: { ...config.agents, [agent]: enabled },
+  }));
+  io.stdout.write(`${agent} integration ${enabled ? "enabled" : "disabled"}.\n`);
+  return 0;
+}
+
 export async function showStatus(context: CliContext, io: CliIo): Promise<number> {
   const config = await loadConfig(context.paths.config);
   const detected = new Map(detectAgents().map((item) => [item.agent, item.installed]));
