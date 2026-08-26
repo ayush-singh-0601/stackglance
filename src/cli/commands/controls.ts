@@ -4,6 +4,12 @@ import type { AgentName } from "../../core/types.js";
 import type { CliContext } from "../context.js";
 import type { CliIo } from "../run.js";
 
+export interface FeedWeights {
+  task: number;
+  project: number;
+  global: number;
+}
+
 export async function setGlobalEnabled(enabled: boolean, context: CliContext, io: CliIo): Promise<number> {
   await updateConfig(context.paths.config, (config) => ({ ...config, enabled }));
   io.stdout.write(`DevRadar passive intelligence ${enabled ? "enabled" : "disabled"}.\n`);
@@ -21,6 +27,29 @@ export async function setAgentEnabled(
     agents: { ...config.agents, [agent]: enabled },
   }));
   io.stdout.write(`${agent} integration ${enabled ? "enabled" : "disabled"}.\n`);
+  return 0;
+}
+
+export async function setPaused(
+  pausedUntil: Date | null,
+  context: CliContext,
+  io: CliIo,
+): Promise<number> {
+  await updateConfig(context.paths.config, (config) => ({
+    ...config,
+    pausedUntil: pausedUntil?.toISOString() ?? null,
+  }));
+  io.stdout.write(pausedUntil === null ? "DevRadar resumed.\n" : `DevRadar paused until ${pausedUntil.toISOString()}.\n`);
+  return 0;
+}
+
+export async function setFeedWeights(weights: FeedWeights, context: CliContext, io: CliIo): Promise<number> {
+  if (weights.task + weights.project + weights.global !== 100 || Object.values(weights).some((value) => value < 0)) {
+    io.stderr.write("Feed weights must be non-negative and total 100.\n");
+    return 2;
+  }
+  await updateConfig(context.paths.config, (config) => ({ ...config, feed: weights }));
+  io.stdout.write(`Feed weights updated: task ${weights.task}, project ${weights.project}, global ${weights.global}.\n`);
   return 0;
 }
 

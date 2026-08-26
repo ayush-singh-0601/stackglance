@@ -1,6 +1,12 @@
 import { AGENTS, type AgentName } from "../core/types.js";
 import { version } from "../meta.js";
-import { setAgentEnabled, setGlobalEnabled, showStatus } from "./commands/controls.js";
+import {
+  setAgentEnabled,
+  setFeedWeights,
+  setGlobalEnabled,
+  setPaused,
+  showStatus,
+} from "./commands/controls.js";
 import { initialize } from "./commands/init.js";
 import { createCliContext, type CliContext } from "./context.js";
 
@@ -70,6 +76,25 @@ export async function runCli(
     return setGlobalEnabled(command === "enable", context, io);
   }
   if (command === "status") return showStatus(context, io);
+  if (command === "pause") {
+    const minutesIndex = args.indexOf("--minutes");
+    const minutes = minutesIndex < 0 ? 60 : Number(args[minutesIndex + 1]);
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1_440) {
+      io.stderr.write("--minutes must be an integer from 1 to 1440.\n");
+      return 2;
+    }
+    return setPaused(new Date(context.now().getTime() + minutes * 60_000), context, io);
+  }
+  if (command === "resume") return setPaused(null, context, io);
+  if (command === "feed" && args.includes("--weights")) {
+    const raw = args[args.indexOf("--weights") + 1];
+    const weights = raw?.split(",").map(Number);
+    if (weights?.length !== 3 || weights.some((value) => !Number.isInteger(value))) {
+      io.stderr.write("--weights expects task,project,global integers.\n");
+      return 2;
+    }
+    return setFeedWeights({ task: weights[0]!, project: weights[1]!, global: weights[2]! }, context, io);
+  }
 
   io.stderr.write(`Unknown command: ${command}\nRun devradar --help for usage.\n`);
   return 2;
