@@ -1,4 +1,6 @@
 export { packageName, version } from "./meta.js";
+export { detectAgents, findExecutable } from "./agents/detect.js";
+export type { DetectedAgent, DetectionOptions } from "./agents/detect.js";
 export { configSchema, DEFAULT_CONFIG } from "./config/schema.js";
 export type { DevRadarConfig } from "./config/schema.js";
 export { loadConfig, saveConfig, updateConfig } from "./config/store.js";
