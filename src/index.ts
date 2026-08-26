@@ -17,6 +17,8 @@ export { AgentSessionMachine } from "./runtime/state-machine.js";
 export type { SessionSnapshot, TransitionResult } from "./runtime/state-machine.js";
 export { evaluateVisibility } from "./runtime/visibility.js";
 export type { VisibilityDecision, VisibilityInput } from "./runtime/visibility.js";
+export { rotationAt } from "./runtime/rotation.js";
+export type { RotationSlot } from "./runtime/rotation.js";
 export { resolvePaths } from "./core/paths.js";
 export type { DevRadarPaths, PathOptions } from "./core/paths.js";
 export { runCli } from "./cli/run.js";
