@@ -26,6 +26,8 @@ export { scoreRelevance } from "./intelligence/relevance.js";
 export type { RelevanceScore } from "./intelligence/relevance.js";
 export { blendFeed } from "./intelligence/blend.js";
 export type { RankedCandidate } from "./intelligence/blend.js";
+export { assembleStory, cardContentSchema } from "./intelligence/assemble.js";
+export type { CardContent } from "./intelligence/assemble.js";
 export { countWords, deterministicSummary } from "./summaries/deterministic.js";
 export type { SummaryResult } from "./summaries/deterministic.js";
 export { DeterministicSummarizer, providerSecret, summarySchema, validateSummary } from "./summaries/contract.js";
