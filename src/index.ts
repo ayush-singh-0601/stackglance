@@ -40,6 +40,8 @@ export type { RotationSlot } from "./runtime/rotation.js";
 export { detectRepository, findRepositoryRoot } from "./intelligence/repository.js";
 export { extractTaskTags } from "./intelligence/task-tags.js";
 export { normalizeStories } from "./intelligence/normalize.js";
+export { collectAndStore, refreshDefaultIntelligence } from "./intelligence/refresh.js";
+export type { CollectionInput, RefreshReport } from "./intelligence/refresh.js";
 export { scoreRelevance } from "./intelligence/relevance.js";
 export type { RelevanceScore } from "./intelligence/relevance.js";
 export { blendFeed } from "./intelligence/blend.js";

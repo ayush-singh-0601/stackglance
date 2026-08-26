@@ -7,16 +7,31 @@ export interface SummaryResult {
 }
 
 export function deterministicSummary(story: StoryCandidate, repository?: RepositoryContext): SummaryResult {
-  const headline = truncateWords(story.title, 12);
+  const headline = ensureMinimum(truncateWords(story.title, 12), "developer update is now available", 5, 12);
   const sentences = story.body
     .replace(/\s+/gu, " ")
     .split(/(?<=[.!?])\s+/u)
     .filter(Boolean);
   const summarySource = sentences.slice(0, 3).join(" ") || `${story.title} was published by ${story.source}.`;
-  const summary = truncateWords(summarySource, 45);
+  const summary = ensureMinimum(
+    truncateWords(summarySource, 45),
+    "The source describes a concrete technical change for current software development workflows and existing projects.",
+    20,
+    45,
+  );
   const matchingTechnology = repository?.technologies.find((technology) => story.tags.includes(technology.toLowerCase()));
-  const whyItMatters = truncateWords(whyFor(story, matchingTechnology), 20);
+  const whyItMatters = ensureMinimum(
+    truncateWords(whyFor(story, matchingTechnology), 20),
+    "Developers can evaluate the change against their current tools and project requirements.",
+    8,
+    20,
+  );
   return { headline, summary, whyItMatters };
+}
+
+function ensureMinimum(value: string, addition: string, minimum: number, maximum: number): string {
+  if (countWords(value) >= minimum) return value;
+  return truncateWords(`${value.replace(/[.!?]+$/u, "")} ${addition}`, maximum);
 }
 
 function whyFor(story: StoryCandidate, matchingTechnology?: string): string {
