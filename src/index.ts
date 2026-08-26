@@ -27,6 +27,7 @@ export type { AddressResolver, ResolvedAddress, SafeFetchOptions, SafeResponse }
 export { parseSyndication, RssAtomCollector } from "./feeds/rss.js";
 export type { FeedCollector, FeedSource } from "./feeds/types.js";
 export { GitHubReleaseCollector } from "./feeds/github.js";
+export { OsvCollector } from "./feeds/osv.js";
 export { resolvePaths } from "./core/paths.js";
 export type { DevRadarPaths, PathOptions } from "./core/paths.js";
 export { runCli } from "./cli/run.js";

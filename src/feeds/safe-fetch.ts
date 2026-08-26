@@ -5,6 +5,8 @@ import { isIP } from "node:net";
 export interface SafeFetchOptions {
   allowedHosts: readonly string[];
   headers?: Readonly<Record<string, string>>;
+  method?: "GET" | "POST";
+  body?: string;
   timeoutMs?: number;
   maxBytes?: number;
   maxRedirects?: number;
@@ -91,13 +93,18 @@ export async function safeFetchText(rawUrl: string, options: SafeFetchOptions): 
   const maxBytes = options.maxBytes ?? 2 * 1024 * 1024;
   const maxRedirects = options.maxRedirects ?? 3;
   const resolve = options.resolve ?? defaultResolver;
-  return fetchValidated(rawUrl, options.allowedHosts, options.headers ?? {}, resolve, timeoutMs, maxBytes, maxRedirects);
+  const method = options.method ?? "GET";
+  const body = options.body ?? "";
+  if (Buffer.byteLength(body) > 256 * 1024) throw new Error("Feed request body exceeded size limit");
+  return fetchValidated(rawUrl, options.allowedHosts, options.headers ?? {}, method, body, resolve, timeoutMs, maxBytes, maxRedirects);
 }
 
 async function fetchValidated(
   rawUrl: string,
   allowedHosts: readonly string[],
   headers: Readonly<Record<string, string>>,
+  method: "GET" | "POST",
+  body: string,
   resolve: AddressResolver,
   timeoutMs: number,
   maxBytes: number,
@@ -109,7 +116,13 @@ async function fetchValidated(
     const call = request(
       url,
       {
-        headers: { "accept-encoding": "identity", "user-agent": "DevRadar/0.1", ...headers },
+        method,
+        headers: {
+          "accept-encoding": "identity",
+          "user-agent": "DevRadar/0.1",
+          ...(body === "" ? {} : { "content-length": Buffer.byteLength(body) }),
+          ...headers,
+        },
         lookup: (_hostname, _options, callback) => callback(null, chosen.address, chosen.family),
       },
       (incoming) => {
@@ -132,17 +145,20 @@ async function fetchValidated(
     );
     call.setTimeout(timeoutMs, () => call.destroy(new Error("Feed request timed out")));
     call.once("error", reject);
-    call.end();
+    call.end(body);
   });
 
   if (response.status >= 300 && response.status < 400) {
     const location = response.headers.location;
     if (typeof location !== "string") throw new Error("Feed redirect did not include a location");
     if (redirectsLeft <= 0) throw new Error("Feed exceeded redirect limit");
+    if (method !== "GET") throw new Error("POST feed requests cannot be redirected");
     return fetchValidated(
       new URL(location, url).toString(),
       allowedHosts,
       headers,
+      method,
+      body,
       resolve,
       timeoutMs,
       maxBytes,
