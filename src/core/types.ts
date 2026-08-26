@@ -34,8 +34,8 @@ export interface AgentEvent {
   agent: AgentName;
   state: AgentState;
   session: string;
-  cwd?: string;
-  task?: string;
+  cwd?: string | undefined;
+  task?: string | undefined;
   occurredAt: string;
 }
 
