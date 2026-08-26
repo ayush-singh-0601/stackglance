@@ -4,6 +4,7 @@ import type { Story, StoryCandidate } from "../core/types.js";
 import { summarySchema } from "../summaries/contract.js";
 import { countWords, type SummaryResult } from "../summaries/deterministic.js";
 import type { RelevanceScore } from "./relevance.js";
+import { assessSecurity } from "./security.js";
 
 export const cardContentSchema = summarySchema.refine(
   (content) => countWords(`${content.headline} ${content.summary} ${content.whyItMatters}`) >= 35,
@@ -14,6 +15,7 @@ export const cardContentSchema = summarySchema.refine(
 
 export function assembleStory(candidate: StoryCandidate, relevance: RelevanceScore, content: SummaryResult): Story {
   const valid = cardContentSchema.parse(content);
+  const security = assessSecurity(candidate);
   return {
     id: candidate.id,
     source: candidate.source,
@@ -28,6 +30,7 @@ export function assembleStory(candidate: StoryCandidate, relevance: RelevanceSco
     expiresAt: candidate.expiresAt,
     relevance: relevance.score,
     tags: candidate.tags,
+    ...(security === undefined ? {} : { priority: security.priority }),
   };
 }
 

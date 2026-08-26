@@ -28,6 +28,8 @@ export { blendFeed } from "./intelligence/blend.js";
 export type { RankedCandidate } from "./intelligence/blend.js";
 export { assembleStory, cardContentSchema } from "./intelligence/assemble.js";
 export type { CardContent } from "./intelligence/assemble.js";
+export { assessSecurity } from "./intelligence/security.js";
+export type { SecurityAssessment } from "./intelligence/security.js";
 export { countWords, deterministicSummary } from "./summaries/deterministic.js";
 export type { SummaryResult } from "./summaries/deterministic.js";
 export { DeterministicSummarizer, providerSecret, summarySchema, validateSummary } from "./summaries/contract.js";
