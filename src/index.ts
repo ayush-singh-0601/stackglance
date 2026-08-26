@@ -6,6 +6,8 @@ export type { DevRadarConfig } from "./config/schema.js";
 export { loadConfig, saveConfig, updateConfig } from "./config/store.js";
 export { DevRadarDatabase } from "./storage/database.js";
 export { explainStory, saveStory } from "./cards/actions.js";
+export { clearRenderedCard, renderCard, sanitizeTerminalText } from "./terminal/render.js";
+export type { RenderedCard, RenderOptions } from "./terminal/render.js";
 export { sendIpcRequest, startIpcServer } from "./daemon/ipc.js";
 export type { IpcServer } from "./daemon/ipc.js";
 export { agentEventSchema, ipcRequestSchema } from "./daemon/protocol.js";
