@@ -9,6 +9,9 @@ import {
 } from "./commands/controls.js";
 import { initialize } from "./commands/init.js";
 import { explainById, runDoctor, saveById, showCatchup, showFeed, showImpact } from "./commands/intelligence.js";
+import { runDaemonCommand } from "./commands/daemon.js";
+import { runAgentCommand } from "../integrations/agent-command.js";
+import { runHookCommand } from "../integrations/hook-command.js";
 import { createCliContext, type CliContext } from "./context.js";
 
 export interface CliWriter {
@@ -102,6 +105,20 @@ export async function runCli(
   if (command === "explain") return explainById(args[1], context, io);
   if (command === "save") return saveById(args[1], context, io);
   if (command === "doctor") return runDoctor(context, io);
+  if (command === "daemon") return runDaemonCommand(context, io);
+  if (command === "agent") {
+    const agent = args[1];
+    if (agent === undefined || !AGENTS.includes(agent as AgentName)) {
+      io.stderr.write(`Invalid agent. Expected one of: ${AGENTS.join(", ")}\n`);
+      return 2;
+    }
+    return runAgentCommand(agent as AgentName, args.slice(2), context, io);
+  }
+  if (command === "hook") {
+    const agent = args[1];
+    if (agent === undefined || !AGENTS.includes(agent as AgentName)) return 0;
+    return runHookCommand(agent as AgentName, args[2], context, io);
+  }
 
   io.stderr.write(`Unknown command: ${command}\nRun devradar --help for usage.\n`);
   return 2;

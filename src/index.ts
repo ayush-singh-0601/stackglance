@@ -20,6 +20,9 @@ export { geminiHookToEvent, installGeminiHooks } from "./integrations/gemini.js"
 export { installOpenCodePlugin, openCodeEventToAgentEvent } from "./integrations/opencode.js";
 export { classifyAiderOutput, installAiderIntegration } from "./integrations/aider.js";
 export type { AiderIntegrationResult } from "./integrations/aider.js";
+export { classifyObservedOutput, runAgentCommand } from "./integrations/agent-command.js";
+export { deliverHookEvent, runHookCommand } from "./integrations/hook-command.js";
+export { createRadarHandler } from "./runtime/engine.js";
 export { sendIpcRequest, startIpcServer } from "./daemon/ipc.js";
 export type { IpcServer } from "./daemon/ipc.js";
 export { agentEventSchema, ipcRequestSchema } from "./daemon/protocol.js";
