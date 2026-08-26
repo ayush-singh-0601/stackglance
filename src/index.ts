@@ -15,6 +15,7 @@ export type { InstalledShim } from "./integrations/shims.js";
 export { codexHookToEvent, installCodexHooks } from "./integrations/codex.js";
 export { claudeHookToEvent, installClaudeHooks } from "./integrations/claude.js";
 export { geminiHookToEvent, installGeminiHooks } from "./integrations/gemini.js";
+export { installOpenCodePlugin, openCodeEventToAgentEvent } from "./integrations/opencode.js";
 export { sendIpcRequest, startIpcServer } from "./daemon/ipc.js";
 export type { IpcServer } from "./daemon/ipc.js";
 export { agentEventSchema, ipcRequestSchema } from "./daemon/protocol.js";
