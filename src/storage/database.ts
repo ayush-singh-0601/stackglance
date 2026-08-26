@@ -110,6 +110,15 @@ export class DevRadarDatabase {
     );
   }
 
+  listSavedStories(): Story[] {
+    const rows = this.connection
+      .prepare(
+        "SELECT stories.* FROM stories JOIN saved_stories ON saved_stories.story_id = stories.id ORDER BY saved_stories.saved_at DESC",
+      )
+      .all();
+    return rows.map(rowToStory);
+  }
+
   setMetadata(key: string, value: string): void {
     this.connection
       .prepare("INSERT INTO metadata (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value")

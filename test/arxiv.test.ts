@@ -6,7 +6,7 @@ describe("arXiv ingestion", () => {
   it("builds a bounded query and maps papers to research stories", async () => {
     const collector = new ArxivCollector(["retrieval augmented generation"], (url, options) => {
       expect(url).toContain("max_results=10");
-      expect(decodeURIComponent(url)).toContain('all:"retrieval augmented generation"');
+      expect(new URL(url).searchParams.get("search_query")).toContain('all:"retrieval augmented generation"');
       expect(options.allowedHosts).toEqual(["export.arxiv.org"]);
       return Promise.resolve({
         url,
