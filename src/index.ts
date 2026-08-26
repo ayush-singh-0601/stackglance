@@ -24,6 +24,8 @@ export { extractTaskTags } from "./intelligence/task-tags.js";
 export type { TaskTags } from "./intelligence/task-tags.js";
 export { isPublicIp, safeFetchText, validateRemoteUrl } from "./feeds/safe-fetch.js";
 export type { AddressResolver, ResolvedAddress, SafeFetchOptions, SafeResponse } from "./feeds/safe-fetch.js";
+export { parseSyndication, RssAtomCollector } from "./feeds/rss.js";
+export type { FeedCollector, FeedSource } from "./feeds/types.js";
 export { resolvePaths } from "./core/paths.js";
 export type { DevRadarPaths, PathOptions } from "./core/paths.js";
 export { runCli } from "./cli/run.js";
