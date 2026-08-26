@@ -20,6 +20,8 @@ export type { VisibilityDecision, VisibilityInput } from "./runtime/visibility.j
 export { rotationAt } from "./runtime/rotation.js";
 export type { RotationSlot } from "./runtime/rotation.js";
 export { detectRepository, findRepositoryRoot } from "./intelligence/repository.js";
+export { extractTaskTags } from "./intelligence/task-tags.js";
+export type { TaskTags } from "./intelligence/task-tags.js";
 export { resolvePaths } from "./core/paths.js";
 export type { DevRadarPaths, PathOptions } from "./core/paths.js";
 export { runCli } from "./cli/run.js";
