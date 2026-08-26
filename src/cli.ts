@@ -1,4 +1,8 @@
 #!/usr/bin/env node
 
-process.stderr.write("DevRadar CLI is not configured yet.\n");
-process.exitCode = 1;
+import { runCli } from "./cli/run.js";
+
+process.exitCode = await runCli(process.argv.slice(2), {
+  stdout: process.stdout,
+  stderr: process.stderr,
+});
