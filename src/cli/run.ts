@@ -7,11 +7,6 @@ import {
   setPaused,
   showStatus,
 } from "./commands/controls.js";
-import { initialize } from "./commands/init.js";
-import { explainById, runDoctor, saveById, showCatchup, showFeed, showImpact } from "./commands/intelligence.js";
-import { runDaemonCommand } from "./commands/daemon.js";
-import { runAgentCommand } from "../integrations/agent-command.js";
-import { runHookCommand } from "../integrations/hook-command.js";
 import { createCliContext, type CliContext } from "./context.js";
 
 export interface CliWriter {
@@ -66,7 +61,10 @@ export async function runCli(
     return 0;
   }
 
-  if (command === "init") return initialize(context.paths, io, { home: context.home ?? undefined });
+  if (command === "init") {
+    const { initialize } = await import("./commands/init.js");
+    return initialize(context.paths, io, { home: context.home ?? undefined });
+  }
   if (command === "enable" || command === "disable") {
     const agentIndex = args.indexOf("--agent");
     if (agentIndex >= 0) {
@@ -97,26 +95,38 @@ export async function runCli(
       io.stderr.write("--weights expects task,project,global integers.\n");
       return 2;
     }
-    return setFeedWeights({ task: weights[0]!, project: weights[1]!, global: weights[2]! }, context, io);
+    return setFeedWeights(
+      { task: weights[0]!, project: weights[1]!, global: weights[2]! },
+      context,
+      io,
+    );
   }
-  if (command === "catchup") return showCatchup(context, io);
-  if (command === "feed") return showFeed(context, io);
-  if (command === "impact") return showImpact(context, io);
-  if (command === "explain") return explainById(args[1], context, io);
-  if (command === "save") return saveById(args[1], context, io);
-  if (command === "doctor") return runDoctor(context, io);
-  if (command === "daemon") return runDaemonCommand(context, io);
+  if (["catchup", "feed", "impact", "explain", "save", "doctor"].includes(command)) {
+    const intelligence = await import("./commands/intelligence.js");
+    if (command === "catchup") return intelligence.showCatchup(context, io);
+    if (command === "feed") return intelligence.showFeed(context, io);
+    if (command === "impact") return intelligence.showImpact(context, io);
+    if (command === "explain") return intelligence.explainById(args[1], context, io);
+    if (command === "save") return intelligence.saveById(args[1], context, io);
+    return intelligence.runDoctor(context, io);
+  }
+  if (command === "daemon") {
+    const { runDaemonCommand } = await import("./commands/daemon.js");
+    return runDaemonCommand(context, io);
+  }
   if (command === "agent") {
     const agent = args[1];
     if (agent === undefined || !AGENTS.includes(agent as AgentName)) {
       io.stderr.write(`Invalid agent. Expected one of: ${AGENTS.join(", ")}\n`);
       return 2;
     }
+    const { runAgentCommand } = await import("../integrations/agent-command.js");
     return runAgentCommand(agent as AgentName, args.slice(2), context, io);
   }
   if (command === "hook") {
     const agent = args[1];
     if (agent === undefined || !AGENTS.includes(agent as AgentName)) return 0;
+    const { runHookCommand } = await import("../integrations/hook-command.js");
     return runHookCommand(agent as AgentName, args[2], context, io);
   }
 

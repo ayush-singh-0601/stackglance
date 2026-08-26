@@ -24,17 +24,26 @@ export class GitHubReleaseCollector implements FeedCollector {
   ) {}
 
   async collect(now = new Date()): Promise<RawStory[]> {
-    const batches = await Promise.all(this.repositories.map((repository) => this.collectRepository(repository, now)));
+    const batches = await Promise.all(
+      this.repositories.map((repository) => this.collectRepository(repository, now)),
+    );
     return batches.flat();
   }
 
   private async collectRepository(repository: string, now: Date): Promise<RawStory[]> {
-    if (!/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/iu.test(repository)) throw new Error(`Invalid GitHub repository: ${repository}`);
-    const headers = { accept: "application/vnd.github+json", ...(this.token === undefined ? {} : { authorization: `Bearer ${this.token}` }) };
-    const response = await this.fetchText(`https://api.github.com/repos/${repository}/releases?per_page=10`, {
-      allowedHosts: ["api.github.com"],
-      headers,
-    });
+    if (!/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/iu.test(repository))
+      throw new Error(`Invalid GitHub repository: ${repository}`);
+    const headers = {
+      accept: "application/vnd.github+json",
+      ...(this.token === undefined ? {} : { authorization: `Bearer ${this.token}` }),
+    };
+    const response = await this.fetchText(
+      `https://api.github.com/repos/${repository}/releases?per_page=10`,
+      {
+        allowedHosts: ["api.github.com"],
+        headers,
+      },
+    );
     const releases = JSON.parse(response.body) as GitHubRelease[];
     return releases
       .filter((release) => !release.draft && release.published_at !== null)

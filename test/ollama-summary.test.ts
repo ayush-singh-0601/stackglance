@@ -37,14 +37,22 @@ describe("Ollama summarizer", () => {
             Promise.resolve({
               response: JSON.stringify({
                 headline: "Local coding model improves reliable tool calls",
-                summary: "The model runs locally and improves tool calling during multi-step coding workflows. Its smaller size makes private repository assistance practical on developer hardware.",
-                whyItMatters: "Teams can use capable coding assistance without sending project context to remote services.",
+                summary:
+                  "The model runs locally and improves tool calling during multi-step coding workflows. Its smaller size makes private repository assistance practical on developer hardware.",
+                whyItMatters:
+                  "Teams can use capable coding assistance without sending project context to remote services.",
               }),
             }),
         });
       },
     });
-    await expect(summarizer.summarize({ story })).resolves.toMatchObject({ headline: "Local coding model improves reliable tool calls" });
-    expect(JSON.parse(body) as unknown).toMatchObject({ stream: false, format: { type: "object" }, options: { temperature: 0 } });
+    await expect(summarizer.summarize({ story })).resolves.toMatchObject({
+      headline: "Local coding model improves reliable tool calls",
+    });
+    expect(JSON.parse(body) as unknown).toMatchObject({
+      stream: false,
+      format: { type: "object" },
+      options: { temperature: 0 },
+    });
   });
 });

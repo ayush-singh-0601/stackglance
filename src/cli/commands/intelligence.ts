@@ -11,17 +11,23 @@ import type { CliContext } from "../context.js";
 import type { CliIo } from "../run.js";
 
 export function showFeed(context: CliContext, io: CliIo): Promise<number> {
-  return Promise.resolve(withDatabase(context, (database) => printStories(database.listStories(context.now()), io)));
+  return Promise.resolve(
+    withDatabase(context, (database) => printStories(database.listStories(context.now()), io)),
+  );
 }
 
 export function showCatchup(context: CliContext, io: CliIo): Promise<number> {
-  return Promise.resolve(withDatabase(context, (database) => {
-    const since = database.getMetadata("last_session") ?? new Date(0).toISOString();
-    const stories = database.listStories(context.now()).filter((story) => Date.parse(story.publishedAt) > Date.parse(since));
-    database.setMetadata("last_session", context.now().toISOString());
-    io.stdout.write(`DevRadar catch-up since ${since}\n\n`);
-    return printStories(stories, io);
-  }));
+  return Promise.resolve(
+    withDatabase(context, (database) => {
+      const since = database.getMetadata("last_session") ?? new Date(0).toISOString();
+      const stories = database
+        .listStories(context.now())
+        .filter((story) => Date.parse(story.publishedAt) > Date.parse(since));
+      database.setMetadata("last_session", context.now().toISOString());
+      io.stdout.write(`DevRadar catch-up since ${since}\n\n`);
+      return printStories(stories, io);
+    }),
+  );
 }
 
 export async function showImpact(context: CliContext, io: CliIo): Promise<number> {
@@ -30,37 +36,48 @@ export async function showImpact(context: CliContext, io: CliIo): Promise<number
     const technologies = new Set(repository.technologies.map((value) => value.toLowerCase()));
     const stories = database
       .listStories(context.now())
-      .filter((story) => story.scope !== "global" || story.tags.some((tag) => technologies.has(tag.toLowerCase())));
+      .filter(
+        (story) =>
+          story.scope !== "global" || story.tags.some((tag) => technologies.has(tag.toLowerCase())),
+      );
     io.stdout.write(`Project impact for ${repository.root}\n\n`);
     return printStories(stories, io);
   });
 }
 
-export function explainById(id: string | undefined, context: CliContext, io: CliIo): Promise<number> {
+export function explainById(
+  id: string | undefined,
+  context: CliContext,
+  io: CliIo,
+): Promise<number> {
   if (id === undefined) return Promise.resolve(missingId("explain", io));
-  return Promise.resolve(withDatabase(context, (database) => {
-    const story = database.getStory(id);
-    if (story === undefined) {
-      io.stderr.write(`Story not found: ${id}\n`);
-      return 1;
-    }
-    io.stdout.write(explainStory(story));
-    return 0;
-  }));
+  return Promise.resolve(
+    withDatabase(context, (database) => {
+      const story = database.getStory(id);
+      if (story === undefined) {
+        io.stderr.write(`Story not found: ${id}\n`);
+        return 1;
+      }
+      io.stdout.write(explainStory(story));
+      return 0;
+    }),
+  );
 }
 
 export function saveById(id: string | undefined, context: CliContext, io: CliIo): Promise<number> {
   if (id === undefined) return Promise.resolve(missingId("save", io));
-  return Promise.resolve(withDatabase(context, (database) => {
-    try {
-      const story = saveStory(database, id, context.now());
-      io.stdout.write(`Saved: ${story.headline}\n`);
-      return 0;
-    } catch (error) {
-      io.stderr.write(`${error instanceof Error ? error.message : "Unable to save story"}\n`);
-      return 1;
-    }
-  }));
+  return Promise.resolve(
+    withDatabase(context, (database) => {
+      try {
+        const story = saveStory(database, id, context.now());
+        io.stdout.write(`Saved: ${story.headline}\n`);
+        return 0;
+      } catch (error) {
+        io.stderr.write(`${error instanceof Error ? error.message : "Unable to save story"}\n`);
+        return 1;
+      }
+    }),
+  );
 }
 
 export async function runDoctor(context: CliContext, io: CliIo): Promise<number> {
@@ -88,7 +105,9 @@ export async function runDoctor(context: CliContext, io: CliIo): Promise<number>
   };
   for (const agent of detectAgents()) {
     const configured = await exists(integrationPaths[agent.agent]!);
-    io.stdout.write(`${agent.installed && configured ? "✓" : "·"} ${agent.agent}: ${agent.installed ? (configured ? "ready" : "setup required") : "not installed"}\n`);
+    io.stdout.write(
+      `${agent.installed && configured ? "✓" : "·"} ${agent.agent}: ${agent.installed ? (configured ? "ready" : "setup required") : "not installed"}\n`,
+    );
   }
   return healthy ? 0 : 1;
 }
@@ -99,12 +118,17 @@ function printStories(stories: readonly Story[], io: CliIo): number {
     return 0;
   }
   for (const story of stories) {
-    io.stdout.write(`${story.id}  [${story.scope.toUpperCase()} ${Math.round(story.relevance * 100)}%] ${story.headline}\n`);
+    io.stdout.write(
+      `${story.id}  [${story.scope.toUpperCase()} ${Math.round(story.relevance * 100)}%] ${story.headline}\n`,
+    );
   }
   return 0;
 }
 
-function withDatabase(context: CliContext, operation: (database: DevRadarDatabase) => number): number {
+function withDatabase(
+  context: CliContext,
+  operation: (database: DevRadarDatabase) => number,
+): number {
   const database = new DevRadarDatabase(context.paths.database);
   try {
     return operation(database);

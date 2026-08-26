@@ -11,7 +11,10 @@ const TTL_DAYS: Readonly<Record<Category, number>> = {
   research: 30,
 };
 
-export function normalizeStories(rawStories: readonly RawStory[], now = new Date()): StoryCandidate[] {
+export function normalizeStories(
+  rawStories: readonly RawStory[],
+  now = new Date(),
+): StoryCandidate[] {
   const seen = new Set<string>();
   const normalized: StoryCandidate[] = [];
   for (const raw of rawStories) {
@@ -24,10 +27,15 @@ export function normalizeStories(rawStories: readonly RawStory[], now = new Date
     seen.add(deduplicationKey);
     const category = raw.category ?? inferCategory(`${title} ${body}`);
     const publishedAt = safeDate(raw.publishedAt, now);
-    const expiresAt = new Date(Date.parse(publishedAt) + TTL_DAYS[category] * 86_400_000).toISOString();
+    const expiresAt = new Date(
+      Date.parse(publishedAt) + TTL_DAYS[category] * 86_400_000,
+    ).toISOString();
     if (Date.parse(expiresAt) <= now.getTime()) continue;
     normalized.push({
-      id: createHash("sha256").update(`${raw.source}\0${raw.sourceId}\0${url}`).digest("hex").slice(0, 24),
+      id: createHash("sha256")
+        .update(`${raw.source}\0${raw.sourceId}\0${url}`)
+        .digest("hex")
+        .slice(0, 24),
       source: clean(raw.source),
       sourceId: raw.sourceId,
       url,

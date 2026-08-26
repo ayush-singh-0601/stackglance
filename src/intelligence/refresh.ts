@@ -35,10 +35,14 @@ export interface CollectionInput {
 
 export async function collectAndStore(input: CollectionInput): Promise<RefreshReport> {
   const now = input.now ?? new Date();
-  const results = await Promise.allSettled(input.collectors.map((collector) => collector.collect(now)));
+  const results = await Promise.allSettled(
+    input.collectors.map((collector) => collector.collect(now)),
+  );
   const raw = results.flatMap((result) => (result.status === "fulfilled" ? result.value : []));
   const errors = results.flatMap((result, index) =>
-    result.status === "rejected" ? [`${input.collectors[index]?.name ?? "feed"}: ${safeError(result.reason)}`] : [],
+    result.status === "rejected"
+      ? [`${input.collectors[index]?.name ?? "feed"}: ${safeError(result.reason)}`]
+      : [],
   );
   const ranked: RankedCandidate[] = normalizeStories(raw, now).map((story) => ({
     story,
@@ -48,7 +52,10 @@ export async function collectAndStore(input: CollectionInput): Promise<RefreshRe
   const stories: Story[] = [];
   for (const item of blended) {
     try {
-      const content = await input.summarizer.summarize({ story: item.story, repository: input.repository });
+      const content = await input.summarizer.summarize({
+        story: item.story,
+        repository: input.repository,
+      });
       stories.push(assembleStory(item.story, item.relevance, content));
     } catch (error) {
       errors.push(`${item.story.source}: ${safeError(error)}`);
@@ -90,7 +97,11 @@ export async function refreshDefaultIntelligence(
 }
 
 function selectSummarizer(
-  config: { provider: "deterministic" | "openai" | "ollama"; model: string; endpoint?: string | undefined },
+  config: {
+    provider: "deterministic" | "openai" | "ollama";
+    model: string;
+    endpoint?: string | undefined;
+  },
   env: NodeJS.ProcessEnv,
 ): Summarizer {
   if (config.provider === "openai") {
@@ -104,5 +115,7 @@ function selectSummarizer(
 }
 
 function safeError(value: unknown): string {
-  return value instanceof Error ? value.message.replace(/\s+/gu, " ").slice(0, 300) : "collector failed";
+  return value instanceof Error
+    ? value.message.replace(/\s+/gu, " ").slice(0, 300)
+    : "collector failed";
 }

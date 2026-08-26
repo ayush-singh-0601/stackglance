@@ -17,9 +17,15 @@ describe("OpenCode plugin", () => {
   });
 
   it("maps busy, idle, permission, and error events", () => {
-    expect(openCodeEventToAgentEvent({ hook_event_name: "session.status", status: "busy" }).state).toBe("agent_thinking");
-    expect(openCodeEventToAgentEvent({ hook_event_name: "session.idle" }).state).toBe("waiting_for_user");
-    expect(openCodeEventToAgentEvent({ hook_event_name: "permission.asked" }).state).toBe("waiting_for_user");
+    expect(
+      openCodeEventToAgentEvent({ hook_event_name: "session.status", status: "busy" }).state,
+    ).toBe("agent_thinking");
+    expect(openCodeEventToAgentEvent({ hook_event_name: "session.idle" }).state).toBe(
+      "waiting_for_user",
+    );
+    expect(openCodeEventToAgentEvent({ hook_event_name: "permission.asked" }).state).toBe(
+      "waiting_for_user",
+    );
     expect(openCodeEventToAgentEvent({ hook_event_name: "session.error" }).state).toBe("error");
   });
 });

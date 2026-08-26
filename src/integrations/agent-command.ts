@@ -18,10 +18,16 @@ export async function runAgentCommand(
   context: CliContext,
   io: CliIo,
 ): Promise<number> {
-  const environment = { ...process.env, PATH: pathWithoutShims(process.env.PATH, context.paths.bin), DEVRADAR_SHIM_ACTIVE: "1" };
+  const environment = {
+    ...process.env,
+    PATH: pathWithoutShims(process.env.PATH, context.paths.bin),
+    DEVRADAR_SHIM_ACTIVE: "1",
+  };
   const executable = findExecutable(agent, { env: environment });
   if (executable === undefined) {
-    io.stderr.write(`Unable to find the original ${agent} executable outside the DevRadar shim directory.\n`);
+    io.stderr.write(
+      `Unable to find the original ${agent} executable outside the DevRadar shim directory.\n`,
+    );
     return 127;
   }
   const config = await loadConfig(context.paths.config);
@@ -62,7 +68,9 @@ export async function runAgentCommand(
   };
   const enterState = (state: AgentState | undefined): void => {
     if (state === undefined) return;
-    const attention = ["waiting_for_user", "user_typing", "finished", "error", "idle"].includes(state);
+    const attention = ["waiting_for_user", "user_typing", "finished", "error", "idle"].includes(
+      state,
+    );
     if (attention) {
       busy = false;
       cancelTimer();
@@ -99,7 +107,8 @@ export async function runAgentCommand(
 export function classifyObservedOutput(agent: AgentName, value: string): AgentState | undefined {
   if (agent === "aider") return classifyAiderOutput(value);
   const text = value.toLowerCase();
-  if (/\b(waiting for|need clarification|would you like|permission|approve)\b/u.test(text)) return "waiting_for_user";
+  if (/\b(waiting for|need clarification|would you like|permission|approve)\b/u.test(text))
+    return "waiting_for_user";
   if (/\b(tests? passed|finished|complete)\b/u.test(text)) return "waiting_for_user";
   if (/\b(running tests?|vitest|jest|pytest|cargo test)\b/u.test(text)) return "running_tests";
   if (/\b(building|compiling|cargo build|npm run build)\b/u.test(text)) return "building";
@@ -109,9 +118,17 @@ export function classifyObservedOutput(agent: AgentName, value: string): AgentSt
   return undefined;
 }
 
-function runInherited(executable: string, args: readonly string[], environment: NodeJS.ProcessEnv): Promise<number> {
+function runInherited(
+  executable: string,
+  args: readonly string[],
+  environment: NodeJS.ProcessEnv,
+): Promise<number> {
   return new Promise<number>((resolve) => {
-    const child = spawn(executable, [...args], { stdio: "inherit", env: environment, windowsHide: false });
+    const child = spawn(executable, [...args], {
+      stdio: "inherit",
+      env: environment,
+      windowsHide: false,
+    });
     child.once("error", () => resolve(127));
     child.once("exit", (code) => resolve(code ?? 1));
   });

@@ -6,20 +6,31 @@ export interface SummaryResult {
   whyItMatters: string;
 }
 
-export function deterministicSummary(story: StoryCandidate, repository?: RepositoryContext): SummaryResult {
-  const headline = ensureMinimum(truncateWords(story.title, 12), "developer update is now available", 5, 12);
+export function deterministicSummary(
+  story: StoryCandidate,
+  repository?: RepositoryContext,
+): SummaryResult {
+  const headline = ensureMinimum(
+    truncateWords(story.title, 12),
+    "developer update is now available",
+    5,
+    12,
+  );
   const sentences = story.body
     .replace(/\s+/gu, " ")
     .split(/(?<=[.!?])\s+/u)
     .filter(Boolean);
-  const summarySource = sentences.slice(0, 3).join(" ") || `${story.title} was published by ${story.source}.`;
+  const summarySource =
+    sentences.slice(0, 3).join(" ") || `${story.title} was published by ${story.source}.`;
   const summary = ensureMinimum(
     truncateWords(summarySource, 45),
     "The source describes a concrete technical change for current software development workflows and existing projects.",
     20,
     45,
   );
-  const matchingTechnology = repository?.technologies.find((technology) => story.tags.includes(technology.toLowerCase()));
+  const matchingTechnology = repository?.technologies.find((technology) =>
+    story.tags.includes(technology.toLowerCase()),
+  );
   const whyItMatters = ensureMinimum(
     truncateWords(whyFor(story, matchingTechnology), 20),
     "Developers can evaluate the change against their current tools and project requirements.",
@@ -40,16 +51,22 @@ function whyFor(story: StoryCandidate, matchingTechnology?: string): string {
       ? "Developers should check affected versions and apply the published remediation."
       : `This project uses ${matchingTechnology}; verify the installed version and remediation.`;
   }
-  if (matchingTechnology !== undefined) return `This project uses ${matchingTechnology}, so the change may affect current development.`;
-  if (story.category === "research") return "The technique may improve the cost, speed, or reliability of developer tooling.";
-  if (story.category === "model") return "This may expand practical model choices for local and agentic coding workflows.";
+  if (matchingTechnology !== undefined)
+    return `This project uses ${matchingTechnology}, so the change may affect current development.`;
+  if (story.category === "research")
+    return "The technique may improve the cost, speed, or reliability of developer tooling.";
+  if (story.category === "model")
+    return "This may expand practical model choices for local and agentic coding workflows.";
   return "The change may influence tools, dependencies, or workflows used by software teams.";
 }
 
 function truncateWords(value: string, limit: number): string {
   const words = value.trim().split(/\s+/u).filter(Boolean);
   if (words.length <= limit) return words.join(" ");
-  return `${words.slice(0, limit).join(" ").replace(/[,:;.!?]+$/u, "")}…`;
+  return `${words
+    .slice(0, limit)
+    .join(" ")
+    .replace(/[,:;.!?]+$/u, "")}…`;
 }
 
 export function countWords(value: string): number {

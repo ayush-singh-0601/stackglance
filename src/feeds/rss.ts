@@ -4,7 +4,10 @@ import type { RawStory } from "../core/types.js";
 import { safeFetchText, type SafeResponse } from "./safe-fetch.js";
 import type { FeedCollector, FeedSource } from "./types.js";
 
-type FetchText = (url: string, options: { allowedHosts: readonly string[] }) => Promise<SafeResponse>;
+type FetchText = (
+  url: string,
+  options: { allowedHosts: readonly string[] },
+) => Promise<SafeResponse>;
 
 export class RssAtomCollector implements FeedCollector {
   readonly name: string;
@@ -17,13 +20,19 @@ export class RssAtomCollector implements FeedCollector {
   }
 
   async collect(now = new Date()): Promise<RawStory[]> {
-    const response = await this.fetchText(this.source.url, { allowedHosts: this.source.allowedHosts });
+    const response = await this.fetchText(this.source.url, {
+      allowedHosts: this.source.allowedHosts,
+    });
     return parseSyndication(response.body, this.source, now);
   }
 }
 
 export function parseSyndication(xml: string, source: FeedSource, now = new Date()): RawStory[] {
-  const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@_", processEntities: false });
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: "@_",
+    processEntities: false,
+  });
   const document = parser.parse(xml) as Record<string, unknown>;
   const rssItems = asArray(asRecord(asRecord(document.rss).channel).item);
   if (rssItems.length > 0) return rssItems.map((item) => rssItem(item, source, now));
@@ -77,7 +86,10 @@ function text(value: unknown): string {
 }
 
 function cleanText(value: string): string {
-  return value.replace(/<[^>]*>/gu, " ").replace(/\s+/gu, " ").trim();
+  return value
+    .replace(/<[^>]*>/gu, " ")
+    .replace(/\s+/gu, " ")
+    .trim();
 }
 
 function validDate(value: string, fallback: Date): string {

@@ -78,9 +78,11 @@ export async function validateRemoteUrl(
 ): Promise<{ url: URL; addresses: readonly ResolvedAddress[] }> {
   const url = new URL(rawUrl);
   if (url.protocol !== "https:") throw new Error("Only HTTPS feed URLs are allowed");
-  if (url.username !== "" || url.password !== "") throw new Error("Feed URLs cannot contain credentials");
+  if (url.username !== "" || url.password !== "")
+    throw new Error("Feed URLs cannot contain credentials");
   if (url.port !== "" && url.port !== "443") throw new Error("Feed URLs must use port 443");
-  if (!allowedHosts.includes(url.hostname.toLowerCase())) throw new Error(`Feed host is not allowlisted: ${url.hostname}`);
+  if (!allowedHosts.includes(url.hostname.toLowerCase()))
+    throw new Error(`Feed host is not allowlisted: ${url.hostname}`);
   const addresses = await resolve(url.hostname, { all: true, verbatim: true });
   if (addresses.length === 0 || addresses.some(({ address }) => !isPublicIp(address))) {
     throw new Error(`Feed host did not resolve exclusively to public addresses: ${url.hostname}`);
@@ -88,15 +90,29 @@ export async function validateRemoteUrl(
   return { url, addresses };
 }
 
-export async function safeFetchText(rawUrl: string, options: SafeFetchOptions): Promise<SafeResponse> {
+export async function safeFetchText(
+  rawUrl: string,
+  options: SafeFetchOptions,
+): Promise<SafeResponse> {
   const timeoutMs = options.timeoutMs ?? 8_000;
   const maxBytes = options.maxBytes ?? 2 * 1024 * 1024;
   const maxRedirects = options.maxRedirects ?? 3;
   const resolve = options.resolve ?? defaultResolver;
   const method = options.method ?? "GET";
   const body = options.body ?? "";
-  if (Buffer.byteLength(body) > 256 * 1024) throw new Error("Feed request body exceeded size limit");
-  return fetchValidated(rawUrl, options.allowedHosts, options.headers ?? {}, method, body, resolve, timeoutMs, maxBytes, maxRedirects);
+  if (Buffer.byteLength(body) > 256 * 1024)
+    throw new Error("Feed request body exceeded size limit");
+  return fetchValidated(
+    rawUrl,
+    options.allowedHosts,
+    options.headers ?? {},
+    method,
+    body,
+    resolve,
+    timeoutMs,
+    maxBytes,
+    maxRedirects,
+  );
 }
 
 async function fetchValidated(
@@ -165,6 +181,7 @@ async function fetchValidated(
       redirectsLeft - 1,
     );
   }
-  if (response.status < 200 || response.status >= 300) throw new Error(`Feed returned HTTP ${response.status}`);
+  if (response.status < 200 || response.status >= 300)
+    throw new Error(`Feed returned HTTP ${response.status}`);
   return response;
 }

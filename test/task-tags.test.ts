@@ -13,7 +13,8 @@ describe("private task tags", () => {
   });
 
   it("redacts credentials, email, and local paths before tagging", () => {
-    const input = "Fix C:\\Users\\alice\\secret.ts for alice@example.com token=ghp_abcdefghijklmnop";
+    const input =
+      "Fix C:\\Users\\alice\\secret.ts for alice@example.com token=ghp_abcdefghijklmnop";
     const output = extractTaskTags(input);
     expect(output.redacted).not.toContain("alice");
     expect(output.redacted).not.toContain("ghp_");

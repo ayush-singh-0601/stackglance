@@ -39,7 +39,13 @@ export function createRadarHandler(paths: DevRadarPaths, now: () => Date = () =>
         database.close();
       }
     } catch (error) {
-      return { ok: true, decision: { show: false, reason: `fail-open: ${error instanceof Error ? error.message : "runtime error"}` } };
+      return {
+        ok: true,
+        decision: {
+          show: false,
+          reason: `fail-open: ${error instanceof Error ? error.message : "runtime error"}`,
+        },
+      };
     }
   };
 }

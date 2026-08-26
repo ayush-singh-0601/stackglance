@@ -92,7 +92,9 @@ export class DevRadarDatabase {
 
   listStories(now = new Date()): Story[] {
     const rows = this.connection
-      .prepare("SELECT * FROM stories WHERE expires_at > ? ORDER BY relevance DESC, published_at DESC")
+      .prepare(
+        "SELECT * FROM stories WHERE expires_at > ? ORDER BY relevance DESC, published_at DESC",
+      )
       .all(now.toISOString());
     return rows.map(rowToStory);
   }
@@ -121,14 +123,15 @@ export class DevRadarDatabase {
 
   setMetadata(key: string, value: string): void {
     this.connection
-      .prepare("INSERT INTO metadata (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value")
+      .prepare(
+        "INSERT INTO metadata (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+      )
       .run(key, value);
   }
 
   getMetadata(key: string): string | undefined {
     const row = this.connection.prepare("SELECT value FROM metadata WHERE key = ?").get(key) as
-      | { value: string }
-      | undefined;
+      { value: string } | undefined;
     return row?.value;
   }
 

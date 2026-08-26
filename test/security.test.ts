@@ -23,7 +23,8 @@ describe("security assessment", () => {
       priority: "critical",
       dependency: "next",
       advisory: "GHSA-one",
-      action: "Check next in this project, review affected versions, and apply the published remediation.",
+      action:
+        "Check next in this project, review affected versions, and apply the published remediation.",
     });
   });
 

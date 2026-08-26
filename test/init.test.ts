@@ -15,7 +15,10 @@ describe("init command", () => {
     const code = await initialize(
       paths,
       { stdout: { write: (value) => output.push(value) }, stderr: { write: () => undefined } },
-      { home: root, detect: () => [{ agent: "codex", command: "codex", installed: true, executable: "codex" }] },
+      {
+        home: root,
+        detect: () => [{ agent: "codex", command: "codex", installed: true, executable: "codex" }],
+      },
     );
     expect(code).toBe(0);
     expect((await loadConfig(paths.config)).enabled).toBe(true);

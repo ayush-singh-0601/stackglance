@@ -3,7 +3,14 @@ import { dirname, join } from "node:path";
 
 import type { AgentEvent, AgentState } from "../core/types.js";
 
-const CLAUDE_EVENTS = ["SessionStart", "UserPromptSubmit", "PreToolUse", "PostToolUse", "Stop", "SessionEnd"] as const;
+const CLAUDE_EVENTS = [
+  "SessionStart",
+  "UserPromptSubmit",
+  "PreToolUse",
+  "PostToolUse",
+  "Stop",
+  "SessionEnd",
+] as const;
 type ClaudeEventName = (typeof CLAUDE_EVENTS)[number];
 
 interface ClaudeSettings {
@@ -20,25 +27,36 @@ export async function installClaudeHooks(home: string): Promise<string> {
     if (!groups.some(isDevRadarGroup)) {
       groups.push({
         matcher: "",
-        hooks: [{ type: "command", command: `devradar hook claude ${event}`, timeout: 2, async: true }],
+        hooks: [
+          { type: "command", command: `devradar hook claude ${event}`, timeout: 2, async: true },
+        ],
       });
     }
     settings.hooks[event] = groups;
   }
   await mkdir(dirname(path), { recursive: true });
   const temporary = `${path}.${process.pid}.tmp`;
-  await writeFile(temporary, `${JSON.stringify(settings, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
+  await writeFile(temporary, `${JSON.stringify(settings, null, 2)}\n`, {
+    encoding: "utf8",
+    mode: 0o600,
+  });
   await rename(temporary, path);
   return path;
 }
 
-export function claudeHookToEvent(payload: Readonly<Record<string, unknown>>, now = new Date()): AgentEvent {
+export function claudeHookToEvent(
+  payload: Readonly<Record<string, unknown>>,
+  now = new Date(),
+): AgentEvent {
   const rawEvent = payload.hook_event_name;
   const eventName =
     typeof rawEvent === "string" && CLAUDE_EVENTS.includes(rawEvent as ClaudeEventName)
       ? (rawEvent as ClaudeEventName)
       : "SessionStart";
-  const task = eventName === "UserPromptSubmit" && typeof payload.prompt === "string" ? payload.prompt : undefined;
+  const task =
+    eventName === "UserPromptSubmit" && typeof payload.prompt === "string"
+      ? payload.prompt
+      : undefined;
   return {
     agent: "claude",
     state: stateFor(eventName, payload),
@@ -67,7 +85,15 @@ function stateFor(event: ClaudeEventName, payload: Readonly<Record<string, unkno
 function isDevRadarGroup(value: unknown): boolean {
   if (typeof value !== "object" || value === null) return false;
   const hooks = (value as { hooks?: unknown }).hooks;
-  return Array.isArray(hooks) && hooks.some((hook) => typeof hook === "object" && hook !== null && String((hook as { command?: unknown }).command).includes("devradar hook claude"));
+  return (
+    Array.isArray(hooks) &&
+    hooks.some(
+      (hook) =>
+        typeof hook === "object" &&
+        hook !== null &&
+        String((hook as { command?: unknown }).command).includes("devradar hook claude"),
+    )
+  );
 }
 
 async function readSettings(path: string): Promise<ClaudeSettings> {

@@ -16,5 +16,5 @@
     "resolveJsonModule": true,
     "types": ["node", "vitest/globals"]
   },
-  "include": ["src", "test", "eslint.config.js", "vitest.config.ts"]
+  "include": ["src", "test", "eslint.config.js", "vitest.config.ts", "tsup.config.ts"]
 }

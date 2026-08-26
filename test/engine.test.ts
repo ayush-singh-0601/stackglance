@@ -17,8 +17,10 @@ const story: Story = {
   sourceId: "one",
   url: "https://example.com",
   headline: "Useful task intelligence arrives for developers",
-  summary: "A release improves coding workflows and repository analysis during longer tasks. Existing interfaces remain stable while the implementation becomes faster and more predictable.",
-  whyItMatters: "Developers can apply the improvement to current work without a disruptive migration.",
+  summary:
+    "A release improves coding workflows and repository analysis during longer tasks. Existing interfaces remain stable while the implementation becomes faster and more predictable.",
+  whyItMatters:
+    "Developers can apply the improvement to current work without a disruptive migration.",
   category: "ai",
   scope: "task",
   publishedAt: "2026-08-26T00:00:00Z",
@@ -39,12 +41,22 @@ describe("daemon decision engine", () => {
     const handler = createRadarHandler(paths, () => now);
     const response = await handler({
       type: "event",
-      event: { agent: "codex", state: "agent_thinking", session: "one", occurredAt: "2026-08-26T00:00:00.000Z" },
+      event: {
+        agent: "codex",
+        state: "agent_thinking",
+        session: "one",
+        occurredAt: "2026-08-26T00:00:00.000Z",
+      },
     });
     expect(response).toMatchObject({ ok: true, decision: { show: true, story: { id: "one" } } });
     const hidden = await handler({
       type: "event",
-      event: { agent: "codex", state: "waiting_for_user", session: "one", occurredAt: "2026-08-26T00:00:04.000Z" },
+      event: {
+        agent: "codex",
+        state: "waiting_for_user",
+        session: "one",
+        occurredAt: "2026-08-26T00:00:04.000Z",
+      },
     });
     expect(hidden).toMatchObject({ decision: { show: false } });
   });

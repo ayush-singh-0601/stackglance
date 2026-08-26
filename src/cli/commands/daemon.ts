@@ -11,7 +11,9 @@ export async function runDaemonCommand(context: CliContext, io: CliIo): Promise<
   io.stdout.write("DevRadar daemon ready.\n");
   const config = await loadConfig(context.paths.config);
   const refresh = (): void => {
-    void refreshDefaultIntelligence(context.paths, context.cwd ?? process.cwd()).catch(() => undefined);
+    void refreshDefaultIntelligence(context.paths, context.cwd ?? process.cwd()).catch(
+      () => undefined,
+    );
   };
   refresh();
   const refreshTimer = setInterval(refresh, config.sources.refreshMinutes * 60_000);

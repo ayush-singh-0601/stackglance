@@ -3,7 +3,7 @@ import { DEFAULT_CONFIG } from "../../config/schema.js";
 import { saveConfig } from "../../config/store.js";
 import type { DevRadarPaths } from "../../core/paths.js";
 import { DevRadarDatabase } from "../../storage/database.js";
-import { installShellShims } from "../../integrations/shims.js";
+import { installShellActivation, installShellShims } from "../../integrations/shims.js";
 import { installCodexHooks } from "../../integrations/codex.js";
 import { installClaudeHooks } from "../../integrations/claude.js";
 import { installGeminiHooks } from "../../integrations/gemini.js";
@@ -30,6 +30,7 @@ export async function initialize(
     agents.filter(({ installed }) => installed).map(({ agent }) => agent),
   );
   const home = dependencies.home ?? homedir();
+  if (agents.some(({ installed }) => installed)) await installShellActivation(paths, { home });
   const installers = {
     codex: installCodexHooks,
     claude: installClaudeHooks,
@@ -45,6 +46,8 @@ export async function initialize(
   for (const { agent, installed } of agents) {
     io.stdout.write(`${installed ? "✓" : "·"} ${agent}${installed ? "" : " (not found)"}\n`);
   }
-  io.stdout.write(`\nNews sources configured.\nProject intelligence enabled.\nShell integrations: ${paths.bin}\nPassive intelligence: ON\n`);
+  io.stdout.write(
+    `\nNews sources configured.\nProject intelligence enabled.\nShell integrations: ${paths.bin}\nPassive intelligence: ON\n`,
+  );
   return 0;
 }

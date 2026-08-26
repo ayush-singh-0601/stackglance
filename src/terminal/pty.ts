@@ -36,7 +36,8 @@ export async function runObservedCommand(
 ): Promise<number> {
   const input = options.input ?? process.stdin;
   const output = options.output ?? process.stdout;
-  const spawn: PtySpawn = options.spawn ?? ((file, values, settings) => nodePty.spawn(file, values, settings));
+  const spawn: PtySpawn =
+    options.spawn ?? ((file, values, settings) => nodePty.spawn(file, values, settings));
   const child = spawn(command, [...args], {
     name: options.env?.TERM ?? process.env.TERM ?? "xterm-256color",
     cols: output.columns ?? 80,
@@ -49,7 +50,8 @@ export async function runObservedCommand(
   input.resume();
   const onInput = (data: Buffer | string): void => {
     const value = typeof data === "string" ? data : data.toString("utf8");
-    const transformed = options.transformInput?.(value) ?? (options.transformInput === undefined ? value : undefined);
+    const transformed =
+      options.transformInput?.(value) ?? (options.transformInput === undefined ? value : undefined);
     if (transformed !== undefined) child.write(transformed);
   };
   const onResize = (): void => child.resize(output.columns ?? 80, output.rows ?? 24);
@@ -73,5 +75,9 @@ export async function runObservedCommand(
 }
 
 export function normalizePtyEnvironment(environment: NodeJS.ProcessEnv): Record<string, string> {
-  return Object.fromEntries(Object.entries(environment).filter((entry): entry is [string, string] => entry[1] !== undefined));
+  return Object.fromEntries(
+    Object.entries(environment).filter(
+      (entry): entry is [string, string] => entry[1] !== undefined,
+    ),
+  );
 }

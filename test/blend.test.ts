@@ -17,7 +17,10 @@ function item(scope: RadarScope, index: number): RankedCandidate {
     tags: [],
     metadata: {},
   };
-  return { story, relevance: { scope, score: 1 - index / 100, taskMatches: [], projectMatches: [], recency: 1 } };
+  return {
+    story,
+    relevance: { scope, score: 1 - index / 100, taskMatches: [], projectMatches: [], recency: 1 },
+  };
 }
 
 describe("feed blending", () => {
@@ -31,6 +34,10 @@ describe("feed blending", () => {
       return result;
     }, {});
     expect(counts).toEqual({ task: 5, project: 3, global: 2 });
-    expect(output.slice(0, 3).map((entry) => entry.relevance.scope)).toEqual(["task", "project", "global"]);
+    expect(output.slice(0, 3).map((entry) => entry.relevance.scope)).toEqual([
+      "task",
+      "project",
+      "global",
+    ]);
   });
 });

@@ -3,7 +3,14 @@ import { dirname, join } from "node:path";
 
 import type { AgentEvent, AgentState } from "../core/types.js";
 
-const GEMINI_EVENTS = ["SessionStart", "BeforeAgent", "BeforeTool", "AfterTool", "AfterAgent", "SessionEnd"] as const;
+const GEMINI_EVENTS = [
+  "SessionStart",
+  "BeforeAgent",
+  "BeforeTool",
+  "AfterTool",
+  "AfterAgent",
+  "SessionEnd",
+] as const;
 type GeminiEventName = (typeof GEMINI_EVENTS)[number];
 
 interface GeminiSettings {
@@ -36,23 +43,33 @@ export async function installGeminiHooks(home: string): Promise<string> {
   }
   await mkdir(dirname(path), { recursive: true });
   const temporary = `${path}.${process.pid}.tmp`;
-  await writeFile(temporary, `${JSON.stringify(settings, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
+  await writeFile(temporary, `${JSON.stringify(settings, null, 2)}\n`, {
+    encoding: "utf8",
+    mode: 0o600,
+  });
   await rename(temporary, path);
   return path;
 }
 
-export function geminiHookToEvent(payload: Readonly<Record<string, unknown>>, now = new Date()): AgentEvent {
+export function geminiHookToEvent(
+  payload: Readonly<Record<string, unknown>>,
+  now = new Date(),
+): AgentEvent {
   const rawEvent = payload.hook_event_name;
   const eventName =
     typeof rawEvent === "string" && GEMINI_EVENTS.includes(rawEvent as GeminiEventName)
       ? (rawEvent as GeminiEventName)
       : "SessionStart";
-  const task = eventName === "BeforeAgent" && typeof payload.prompt === "string" ? payload.prompt : undefined;
+  const task =
+    eventName === "BeforeAgent" && typeof payload.prompt === "string" ? payload.prompt : undefined;
   return {
     agent: "gemini",
     state: stateFor(eventName, payload),
     session: typeof payload.session_id === "string" ? payload.session_id : "gemini-session",
-    occurredAt: typeof payload.timestamp === "string" ? new Date(payload.timestamp).toISOString() : now.toISOString(),
+    occurredAt:
+      typeof payload.timestamp === "string"
+        ? new Date(payload.timestamp).toISOString()
+        : now.toISOString(),
     ...(typeof payload.cwd === "string" ? { cwd: payload.cwd } : {}),
     ...(task === undefined ? {} : { task }),
   };
@@ -75,7 +92,15 @@ function stateFor(event: GeminiEventName, payload: Readonly<Record<string, unkno
 function isDevRadarGroup(value: unknown): boolean {
   if (typeof value !== "object" || value === null) return false;
   const hooks = (value as { hooks?: unknown }).hooks;
-  return Array.isArray(hooks) && hooks.some((hook) => typeof hook === "object" && hook !== null && String((hook as { command?: unknown }).command).includes("devradar hook gemini"));
+  return (
+    Array.isArray(hooks) &&
+    hooks.some(
+      (hook) =>
+        typeof hook === "object" &&
+        hook !== null &&
+        String((hook as { command?: unknown }).command).includes("devradar hook gemini"),
+    )
+  );
 }
 
 async function readSettings(path: string): Promise<GeminiSettings> {

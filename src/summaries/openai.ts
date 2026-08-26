@@ -20,7 +20,8 @@ export class OpenAiSummarizer implements Summarizer {
   private readonly createResponse: CreateResponse;
 
   constructor(private readonly options: OpenAiSummarizerOptions) {
-    if (options.apiKey.trim() === "") throw new Error("OPENAI_API_KEY is required for the OpenAI summarizer");
+    if (options.apiKey.trim() === "")
+      throw new Error("OPENAI_API_KEY is required for the OpenAI summarizer");
     if (options.createResponse !== undefined) {
       this.createResponse = options.createResponse;
     } else {

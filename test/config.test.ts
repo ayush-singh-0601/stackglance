@@ -23,8 +23,8 @@ describe("configuration", () => {
   });
 
   it("rejects feed weights that do not total 100", () => {
-    expect(() => configSchema.parse({ ...DEFAULT_CONFIG, feed: { task: 1, project: 1, global: 1 } })).toThrow(
-      "feed weights must total 100",
-    );
+    expect(() =>
+      configSchema.parse({ ...DEFAULT_CONFIG, feed: { task: 1, project: 1, global: 1 } }),
+    ).toThrow("feed weights must total 100");
   });
 });

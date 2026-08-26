@@ -28,13 +28,18 @@ describe("fail-open runtime recovery", () => {
 
   it("fails open when the daemon remains unavailable", async () => {
     await expect(
-      deliverHookEvent(event, "socket", { send: () => Promise.reject(new Error("offline")), start: () => undefined }),
+      deliverHookEvent(event, "socket", {
+        send: () => Promise.reject(new Error("offline")),
+        start: () => undefined,
+      }),
     ).resolves.toBe(false);
   });
 
   it("classifies observed agent output conservatively", () => {
     expect(classifyObservedOutput("codex", "Thinking about the repository")).toBe("agent_thinking");
-    expect(classifyObservedOutput("gemini", "Would you like me to continue?")).toBe("waiting_for_user");
+    expect(classifyObservedOutput("gemini", "Would you like me to continue?")).toBe(
+      "waiting_for_user",
+    );
     expect(classifyObservedOutput("claude", "Running pytest")).toBe("running_tests");
   });
 });

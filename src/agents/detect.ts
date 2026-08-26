@@ -33,13 +33,18 @@ function defaultCanExecute(path: string): boolean {
   }
 }
 
-export function findExecutable(command: string, options: DetectionOptions = {}): string | undefined {
+export function findExecutable(
+  command: string,
+  options: DetectionOptions = {},
+): string | undefined {
   const env = options.env ?? process.env;
   const platform = options.platform ?? process.platform;
   const canExecute = options.canExecute ?? defaultCanExecute;
   const paths = (env.PATH ?? "").split(delimiter).filter(Boolean);
   const extensions =
-    platform === "win32" ? (env.PATHEXT ?? ".COM;.EXE;.BAT;.CMD").split(";").map((value) => value.toLowerCase()) : [""];
+    platform === "win32"
+      ? (env.PATHEXT ?? ".COM;.EXE;.BAT;.CMD").split(";").map((value) => value.toLowerCase())
+      : [""];
 
   for (const directory of paths) {
     for (const extension of extensions) {
@@ -54,6 +59,11 @@ export function detectAgents(options: DetectionOptions = {}): DetectedAgent[] {
   return AGENTS.map((agent) => {
     const command = COMMANDS[agent];
     const executable = findExecutable(command, options);
-    return { agent, command, installed: executable !== undefined, ...(executable === undefined ? {} : { executable }) };
+    return {
+      agent,
+      command,
+      installed: executable !== undefined,
+      ...(executable === undefined ? {} : { executable }),
+    };
   });
 }

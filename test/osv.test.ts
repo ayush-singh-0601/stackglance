@@ -15,7 +15,17 @@ describe("OSV ingestion", () => {
           status: 200,
           headers: {},
           body: JSON.stringify({
-            results: [{ vulns: [{ id: "GHSA-test", summary: "Authorization bypass", modified: "2026-08-26T00:00:00Z" }] }],
+            results: [
+              {
+                vulns: [
+                  {
+                    id: "GHSA-test",
+                    summary: "Authorization bypass",
+                    modified: "2026-08-26T00:00:00Z",
+                  },
+                ],
+              },
+            ],
           }),
         });
       },

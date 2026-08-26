@@ -14,10 +14,20 @@ describe("card visibility", () => {
       occurredAt: "2026-08-26T00:00:00.000Z",
     };
     expect(
-      evaluateVisibility({ config: enabled, event, stateEnteredAt: event.occurredAt, now: new Date("2026-08-26T00:00:02.999Z") }),
+      evaluateVisibility({
+        config: enabled,
+        event,
+        stateEnteredAt: event.occurredAt,
+        now: new Date("2026-08-26T00:00:02.999Z"),
+      }),
     ).toMatchObject({ show: false });
     expect(
-      evaluateVisibility({ config: enabled, event, stateEnteredAt: event.occurredAt, now: new Date("2026-08-26T00:00:03.000Z") }),
+      evaluateVisibility({
+        config: enabled,
+        event,
+        stateEnteredAt: event.occurredAt,
+        now: new Date("2026-08-26T00:00:03.000Z"),
+      }),
     ).toMatchObject({ show: true, mode: "full" });
   });
 
@@ -29,7 +39,12 @@ describe("card visibility", () => {
       occurredAt: "2026-08-26T00:00:10.000Z",
     };
     expect(
-      evaluateVisibility({ config: enabled, event, stateEnteredAt: event.occurredAt, now: new Date("2026-08-26T00:01:00.000Z") }),
+      evaluateVisibility({
+        config: enabled,
+        event,
+        stateEnteredAt: event.occurredAt,
+        now: new Date("2026-08-26T00:01:00.000Z"),
+      }),
     ).toMatchObject({ show: false, mode: "hidden" });
   });
 
@@ -46,7 +61,12 @@ describe("card visibility", () => {
       pausedUntil: "2026-08-27T00:00:00.000Z",
     };
     expect(
-      evaluateVisibility({ config, event, stateEnteredAt: event.occurredAt, now: new Date("2026-08-26T01:00:00.000Z") }),
+      evaluateVisibility({
+        config,
+        event,
+        stateEnteredAt: event.occurredAt,
+        now: new Date("2026-08-26T01:00:00.000Z"),
+      }),
     ).toMatchObject({ show: false });
   });
 });

@@ -20,8 +20,15 @@ export function renderCard(story: Story, options: RenderOptions = {}): RenderedC
   if (!options.minimal) {
     lines.push(...boxed(wrap(story.summary, inner), inner), empty(inner));
     lines.push(...boxed(wrap(`Why it matters: ${story.whyItMatters}`, inner), inner), empty(inner));
-    const signal = story.priority === undefined ? `Relevance: ${Math.round(story.relevance * 100)}%` : `Priority: ${story.priority.toUpperCase()}`;
-    lines.push(...boxed([signal], inner), empty(inner), ...boxed(["[E] Explain   [S] Save"], inner));
+    const signal =
+      story.priority === undefined
+        ? `Relevance: ${Math.round(story.relevance * 100)}%`
+        : `Priority: ${story.priority.toUpperCase()}`;
+    lines.push(
+      ...boxed([signal], inner),
+      empty(inner),
+      ...boxed(["[E] Explain   [S] Save"], inner),
+    );
   }
   lines.push(`╰${"─".repeat(width - 2)}╯`);
   return { text: `${lines.join("\n")}\n`, lines: lines.length, width };

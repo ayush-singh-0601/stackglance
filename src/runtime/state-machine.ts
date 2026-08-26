@@ -19,7 +19,10 @@ export class AgentSessionMachine {
   transition(event: AgentEvent): TransitionResult {
     const key = `${event.agent}:${event.session}`;
     const current = this.sessions.get(key);
-    if (current !== undefined && Date.parse(event.occurredAt) < Date.parse(current.event.occurredAt)) {
+    if (
+      current !== undefined &&
+      Date.parse(event.occurredAt) < Date.parse(current.event.occurredAt)
+    ) {
       return { accepted: false, reason: "stale event", snapshot: current };
     }
 
@@ -27,7 +30,9 @@ export class AgentSessionMachine {
     const snapshot: SessionSnapshot = {
       event,
       ...(current === undefined ? {} : { previousState: current.event.state }),
-      stateEnteredAt: stateChanged ? event.occurredAt : (current?.stateEnteredAt ?? event.occurredAt),
+      stateEnteredAt: stateChanged
+        ? event.occurredAt
+        : (current?.stateEnteredAt ?? event.occurredAt),
       revision: (current?.revision ?? 0) + 1,
     };
     this.sessions.set(key, snapshot);

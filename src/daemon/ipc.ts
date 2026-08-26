@@ -30,7 +30,9 @@ export async function startIpcServer(
         .then(() => ipcRequestSchema.parse(JSON.parse(line) as unknown))
         .then(handler)
         .then((response) => socket.end(`${JSON.stringify(response)}\n`))
-        .catch((error: unknown) => socket.end(`${JSON.stringify({ ok: false, error: String(error) })}\n`));
+        .catch((error: unknown) =>
+          socket.end(`${JSON.stringify({ ok: false, error: String(error) })}\n`),
+        );
     });
   });
 
@@ -51,11 +53,18 @@ export async function startIpcServer(
   };
 }
 
-export async function sendIpcRequest(socketPath: string, request: IpcRequest, timeoutMs = 1_000): Promise<IpcResponse> {
+export async function sendIpcRequest(
+  socketPath: string,
+  request: IpcRequest,
+  timeoutMs = 1_000,
+): Promise<IpcResponse> {
   return new Promise<IpcResponse>((resolve, reject) => {
     const socket = createConnection(socketPath);
     let buffer = "";
-    const timeout = setTimeout(() => socket.destroy(new Error("DevRadar daemon timed out")), timeoutMs);
+    const timeout = setTimeout(
+      () => socket.destroy(new Error("DevRadar daemon timed out")),
+      timeoutMs,
+    );
     socket.setEncoding("utf8");
     socket.once("connect", () => socket.write(`${JSON.stringify(request)}\n`));
     socket.on("data", (chunk: string) => {

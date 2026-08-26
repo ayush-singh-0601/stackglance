@@ -34,7 +34,10 @@ export function resolvePaths(options: PathOptions = {}): DevRadarPaths {
   const socket =
     platform === "win32"
       ? "\\\\.\\pipe\\devradar"
-      : join(env.XDG_RUNTIME_DIR ?? join(tmpdir(), `devradar-${process.getuid?.() ?? "user"}`), "daemon.sock");
+      : join(
+          env.XDG_RUNTIME_DIR ?? join(tmpdir(), `devradar-${process.getuid?.() ?? "user"}`),
+          "daemon.sock",
+        );
 
   return {
     root,

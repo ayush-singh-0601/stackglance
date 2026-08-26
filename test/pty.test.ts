@@ -2,7 +2,11 @@ import { EventEmitter } from "node:events";
 
 import { describe, expect, it } from "vitest";
 
-import { normalizePtyEnvironment, runObservedCommand, type PtyProcessLike } from "../src/terminal/pty.js";
+import {
+  normalizePtyEnvironment,
+  runObservedCommand,
+  type PtyProcessLike,
+} from "../src/terminal/pty.js";
 
 describe("PTY observation", () => {
   it("drops undefined environment values", () => {
@@ -13,7 +17,11 @@ describe("PTY observation", () => {
     const input = new EventEmitter() as NodeJS.ReadStream;
     Object.assign(input, { isRaw: false, resume: () => input, setRawMode: () => input });
     const writes: string[] = [];
-    const output = { columns: 80, rows: 24, write: (value: string) => writes.push(value) } as unknown as NodeJS.WriteStream;
+    const output = {
+      columns: 80,
+      rows: 24,
+      write: (value: string) => writes.push(value),
+    } as unknown as NodeJS.WriteStream;
     const child: PtyProcessLike = {
       write: () => undefined,
       resize: () => undefined,
@@ -27,7 +35,9 @@ describe("PTY observation", () => {
         return { dispose: () => undefined };
       },
     };
-    await expect(runObservedCommand("agent", [], { input, output, spawn: () => child })).resolves.toBe(7);
+    await expect(
+      runObservedCommand("agent", [], { input, output, spawn: () => child }),
+    ).resolves.toBe(7);
     expect(writes).toEqual(["Thinking..."]);
   });
 });

@@ -7,13 +7,15 @@ describe("BYOK summary contract", () => {
     expect(
       validateSummary({
         headline: "New coding model improves repository work",
-        summary: "The release improves long-running coding tasks, tool use, and repository-scale reasoning. It also reduces latency during multi-step changes across larger projects.",
-        whyItMatters: "Developers can complete autonomous coding workflows faster and with fewer interruptions.",
+        summary:
+          "The release improves long-running coding tasks, tool use, and repository-scale reasoning. It also reduces latency during multi-step changes across larger projects.",
+        whyItMatters:
+          "Developers can complete autonomous coding workflows faster and with fewer interruptions.",
       }),
     ).toMatchObject({ headline: "New coding model improves repository work" });
-    expect(() => validateSummary({ headline: "Too short", summary: "Too short", whyItMatters: "Too short" })).toThrow(
-      "headline must contain",
-    );
+    expect(() =>
+      validateSummary({ headline: "Too short", summary: "Too short", whyItMatters: "Too short" }),
+    ).toThrow("headline must contain");
   });
 
   it("reads provider secrets from the environment instead of configuration", () => {

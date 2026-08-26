@@ -26,7 +26,11 @@ export class ArxivCollector implements FeedCollector {
     });
     const url = `https://export.arxiv.org/api/query?${parameters.toString()}`;
     const response = await this.fetchText(url, { allowedHosts: ["export.arxiv.org"] });
-    return parseSyndication(response.body, { name: this.name, url, allowedHosts: ["export.arxiv.org"] }, now).map((story) => ({
+    return parseSyndication(
+      response.body,
+      { name: this.name, url, allowedHosts: ["export.arxiv.org"] },
+      now,
+    ).map((story) => ({
       ...story,
       category: "research",
     }));
@@ -34,5 +38,10 @@ export class ArxivCollector implements FeedCollector {
 }
 
 function cleanTerm(term: string): string {
-  return term.toLowerCase().replace(/[^a-z0-9 .+#-]/gu, " ").replace(/\s+/gu, " ").trim().slice(0, 80);
+  return term
+    .toLowerCase()
+    .replace(/[^a-z0-9 .+#-]/gu, " ")
+    .replace(/\s+/gu, " ")
+    .trim()
+    .slice(0, 80);
 }

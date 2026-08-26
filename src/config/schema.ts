@@ -57,9 +57,22 @@ export const DEFAULT_CONFIG: DevRadarConfig = {
   sources: {
     refreshMinutes: 30,
     rss: [
-      { name: "GitHub Changelog", url: "https://github.blog/changelog/feed/", allowedHosts: ["github.blog"] },
-      { name: "Node.js Blog", url: "https://nodejs.org/en/feed/blog.xml", allowedHosts: ["nodejs.org"] },
+      {
+        name: "GitHub Changelog",
+        url: "https://github.blog/changelog/feed/",
+        allowedHosts: ["github.blog"],
+      },
+      {
+        name: "Node.js Blog",
+        url: "https://nodejs.org/en/feed/blog.xml",
+        allowedHosts: ["nodejs.org"],
+      },
     ],
-    githubRepositories: ["microsoft/typescript", "vercel/next.js", "prisma/prisma", "microsoft/playwright"],
+    githubRepositories: [
+      "microsoft/typescript",
+      "vercel/next.js",
+      "prisma/prisma",
+      "microsoft/playwright",
+    ],
   },
 };

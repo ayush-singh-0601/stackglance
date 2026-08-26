@@ -10,8 +10,10 @@ export interface SecurityAssessment {
 export function assessSecurity(story: StoryCandidate): SecurityAssessment | undefined {
   if (story.category !== "security") return undefined;
   const severity = String(story.metadata.severity ?? "unknown").toLowerCase();
-  const dependency = typeof story.metadata.dependency === "string" ? story.metadata.dependency : undefined;
-  const advisory = typeof story.metadata.advisory === "string" ? story.metadata.advisory : undefined;
+  const dependency =
+    typeof story.metadata.dependency === "string" ? story.metadata.dependency : undefined;
+  const advisory =
+    typeof story.metadata.advisory === "string" ? story.metadata.advisory : undefined;
   const priority =
     severity === "critical"
       ? "critical"

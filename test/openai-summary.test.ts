@@ -28,14 +28,20 @@ describe("OpenAI Responses summarizer", () => {
         return Promise.resolve({
           output_text: JSON.stringify({
             headline: "New coding model improves repository reasoning",
-            summary: "The model handles longer coding tasks with more reliable tool calls and lower latency. It can reason across larger repositories while maintaining progress through multi-step changes.",
-            whyItMatters: "Developers may finish autonomous coding tasks faster with fewer failed tool interactions.",
+            summary:
+              "The model handles longer coding tasks with more reliable tool calls and lower latency. It can reason across larger repositories while maintaining progress through multi-step changes.",
+            whyItMatters:
+              "Developers may finish autonomous coding tasks faster with fewer failed tool interactions.",
           }),
         });
       },
     });
     const result = await summarizer.summarize({ story });
     expect(result.headline).toContain("coding model");
-    expect(captured).toMatchObject({ model: "gpt-test", store: false, text: { format: { type: "json_schema", strict: true } } });
+    expect(captured).toMatchObject({
+      model: "gpt-test",
+      store: false,
+      text: { format: { type: "json_schema", strict: true } },
+    });
   });
 });

@@ -13,7 +13,10 @@ describe("story normalization", () => {
       publishedAt: "2026-08-26T00:00:00Z",
       fetchedAt: "2026-08-26T01:00:00Z",
     };
-    const stories = normalizeStories([raw, { ...raw, sourceId: "duplicate", url: "https://example.com/release" }], new Date("2026-08-27"));
+    const stories = normalizeStories(
+      [raw, { ...raw, sourceId: "duplicate", url: "https://example.com/release" }],
+      new Date("2026-08-27"),
+    );
     expect(stories).toHaveLength(1);
     expect(stories[0]).toMatchObject({
       category: "security",
@@ -23,7 +26,13 @@ describe("story normalization", () => {
   });
 
   it("drops stale and non-HTTPS input", () => {
-    const base = { source: "x", sourceId: "x", title: "Old news", body: "body", fetchedAt: "2026-08-26T00:00:00Z" };
+    const base = {
+      source: "x",
+      sourceId: "x",
+      title: "Old news",
+      body: "body",
+      fetchedAt: "2026-08-26T00:00:00Z",
+    };
     expect(
       normalizeStories(
         [

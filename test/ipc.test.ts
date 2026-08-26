@@ -7,7 +7,10 @@ import { sendIpcRequest, startIpcServer } from "../src/daemon/ipc.js";
 describe("daemon IPC", () => {
   it("validates and exchanges one agent event", async () => {
     const token = crypto.randomUUID();
-    const socket = process.platform === "win32" ? `\\\\.\\pipe\\devradar-${token}` : join("/tmp", `devradar-${token}.sock`);
+    const socket =
+      process.platform === "win32"
+        ? `\\\\.\\pipe\\devradar-${token}`
+        : join("/tmp", `devradar-${token}.sock`);
     const server = await startIpcServer(socket, (request) => ({
       ok: true,
       decision: { show: request.event.state === "agent_thinking", reason: "test" },

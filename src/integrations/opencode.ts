@@ -37,8 +37,12 @@ export async function installOpenCodePlugin(home: string): Promise<string> {
   return path;
 }
 
-export function openCodeEventToAgentEvent(payload: Readonly<Record<string, unknown>>, now = new Date()): AgentEvent {
-  const type = typeof payload.hook_event_name === "string" ? payload.hook_event_name : "session.status";
+export function openCodeEventToAgentEvent(
+  payload: Readonly<Record<string, unknown>>,
+  now = new Date(),
+): AgentEvent {
+  const type =
+    typeof payload.hook_event_name === "string" ? payload.hook_event_name : "session.status";
   return {
     agent: "opencode",
     state: openCodeState(type, payload.status),

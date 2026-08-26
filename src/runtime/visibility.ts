@@ -22,10 +22,16 @@ const FULL_CARD_STATES = new Set<AgentState>([
   "installing",
 ]);
 
-export function evaluateVisibility({ config, event, stateEnteredAt, now }: VisibilityInput): VisibilityDecision {
+export function evaluateVisibility({
+  config,
+  event,
+  stateEnteredAt,
+  now,
+}: VisibilityInput): VisibilityDecision {
   if (!config.enabled) return hidden("DevRadar is disabled");
   if (!config.agents[event.agent]) return hidden(`${event.agent} integration is disabled`);
-  if (config.pausedUntil !== null && Date.parse(config.pausedUntil) > now.getTime()) return hidden("quiet mode is active");
+  if (config.pausedUntil !== null && Date.parse(config.pausedUntil) > now.getTime())
+    return hidden("quiet mode is active");
   if (!FULL_CARD_STATES.has(event.state) && event.state !== "agent_generating") {
     return hidden(`agent state ${event.state} requires a clear screen`);
   }

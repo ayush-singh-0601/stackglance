@@ -6,14 +6,23 @@ import { countWords, type SummaryResult } from "../summaries/deterministic.js";
 import type { RelevanceScore } from "./relevance.js";
 import { assessSecurity } from "./security.js";
 
-export const cardContentSchema = summarySchema.refine(
-  (content) => countWords(`${content.headline} ${content.summary} ${content.whyItMatters}`) >= 35,
-  { message: "card must contain at least 35 words" },
-).refine((content) => countWords(`${content.headline} ${content.summary} ${content.whyItMatters}`) <= 70, {
-  message: "card must contain no more than 70 words",
-});
+export const cardContentSchema = summarySchema
+  .refine(
+    (content) => countWords(`${content.headline} ${content.summary} ${content.whyItMatters}`) >= 35,
+    { message: "card must contain at least 35 words" },
+  )
+  .refine(
+    (content) => countWords(`${content.headline} ${content.summary} ${content.whyItMatters}`) <= 70,
+    {
+      message: "card must contain no more than 70 words",
+    },
+  );
 
-export function assembleStory(candidate: StoryCandidate, relevance: RelevanceScore, content: SummaryResult): Story {
+export function assembleStory(
+  candidate: StoryCandidate,
+  relevance: RelevanceScore,
+  content: SummaryResult,
+): Story {
   const valid = cardContentSchema.parse(content);
   const security = assessSecurity(candidate);
   return {

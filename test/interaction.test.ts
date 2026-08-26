@@ -10,8 +10,10 @@ const story: Story = {
   sourceId: "one",
   url: "https://example.com",
   headline: "Redis release improves common caching workflows",
-  summary: "The release reduces unnecessary network round trips and adds better diagnostics for cache misses. Existing commands remain compatible while applications gain more predictable behavior.",
-  whyItMatters: "This project uses Redis, so the performance change directly affects current API work.",
+  summary:
+    "The release reduces unnecessary network round trips and adds better diagnostics for cache misses. Existing commands remain compatible while applications gain more predictable behavior.",
+  whyItMatters:
+    "This project uses Redis, so the performance change directly affects current API work.",
   category: "project",
   scope: "project",
   publishedAt: "2026-08-26T00:00:00Z",
@@ -44,7 +46,10 @@ describe("card keyboard interaction", () => {
 
   it("hides and forwards ordinary developer input", () => {
     const database = new DevRadarDatabase(":memory:");
-    const controller = new CardInteractionController({ database, output: { write: () => undefined } });
+    const controller = new CardInteractionController({
+      database,
+      output: { write: () => undefined },
+    });
     controller.show(story);
     expect(controller.handleInput("hello")).toBe("hello");
     database.close();

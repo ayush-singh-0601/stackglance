@@ -11,9 +11,19 @@ export type { InteractionOptions, InteractionOutput } from "./cards/interaction.
 export { clearRenderedCard, renderCard, sanitizeTerminalText } from "./terminal/render.js";
 export type { RenderedCard, RenderOptions } from "./terminal/render.js";
 export { normalizePtyEnvironment, runObservedCommand } from "./terminal/pty.js";
-export type { ObservedCommandOptions, PtyProcessLike, PtySpawn, PtySpawnOptions } from "./terminal/pty.js";
-export { installShellShims, pathWithShims, pathWithoutShims } from "./integrations/shims.js";
-export type { InstalledShim } from "./integrations/shims.js";
+export type {
+  ObservedCommandOptions,
+  PtyProcessLike,
+  PtySpawn,
+  PtySpawnOptions,
+} from "./terminal/pty.js";
+export {
+  installShellActivation,
+  installShellShims,
+  pathWithShims,
+  pathWithoutShims,
+} from "./integrations/shims.js";
+export type { InstalledShim, ShellActivationOptions } from "./integrations/shims.js";
 export { codexHookToEvent, installCodexHooks } from "./integrations/codex.js";
 export { claudeHookToEvent, installClaudeHooks } from "./integrations/claude.js";
 export { geminiHookToEvent, installGeminiHooks } from "./integrations/gemini.js";
@@ -52,7 +62,12 @@ export { assessSecurity } from "./intelligence/security.js";
 export type { SecurityAssessment } from "./intelligence/security.js";
 export { countWords, deterministicSummary } from "./summaries/deterministic.js";
 export type { SummaryResult } from "./summaries/deterministic.js";
-export { DeterministicSummarizer, providerSecret, summarySchema, validateSummary } from "./summaries/contract.js";
+export {
+  DeterministicSummarizer,
+  providerSecret,
+  summarySchema,
+  validateSummary,
+} from "./summaries/contract.js";
 export type { Summarizer, SummaryInput } from "./summaries/contract.js";
 export { OpenAiSummarizer } from "./summaries/openai.js";
 export type { OpenAiSummarizerOptions } from "./summaries/openai.js";
@@ -60,7 +75,12 @@ export { OllamaSummarizer, validateLocalEndpoint } from "./summaries/ollama.js";
 export type { OllamaSummarizerOptions } from "./summaries/ollama.js";
 export type { TaskTags } from "./intelligence/task-tags.js";
 export { isPublicIp, safeFetchText, validateRemoteUrl } from "./feeds/safe-fetch.js";
-export type { AddressResolver, ResolvedAddress, SafeFetchOptions, SafeResponse } from "./feeds/safe-fetch.js";
+export type {
+  AddressResolver,
+  ResolvedAddress,
+  SafeFetchOptions,
+  SafeResponse,
+} from "./feeds/safe-fetch.js";
 export { parseSyndication, RssAtomCollector } from "./feeds/rss.js";
 export type { FeedCollector, FeedSource } from "./feeds/types.js";
 export { GitHubReleaseCollector } from "./feeds/github.js";

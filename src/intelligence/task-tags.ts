@@ -33,7 +33,10 @@ export interface TaskTags {
 }
 
 export function extractTaskTags(task: string, limit = 12): TaskTags {
-  let redacted = task.normalize("NFKC").replace(/[\r\n\t]+/gu, " ").trim();
+  let redacted = task
+    .normalize("NFKC")
+    .replace(/[\r\n\t]+/gu, " ")
+    .trim();
   for (const pattern of SECRET_PATTERNS) redacted = redacted.replace(pattern, " [redacted] ");
   redacted = redacted.replace(/\s+/gu, " ").trim().slice(0, 1_000);
 

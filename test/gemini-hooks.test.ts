@@ -11,7 +11,9 @@ describe("Gemini CLI native hooks", () => {
     const home = await mkdtemp(join(tmpdir(), "devradar-gemini-"));
     const path = await installGeminiHooks(home);
     await installGeminiHooks(home);
-    const settings = JSON.parse(await readFile(path, "utf8")) as { hooks: Record<string, unknown[]> };
+    const settings = JSON.parse(await readFile(path, "utf8")) as {
+      hooks: Record<string, unknown[]>;
+    };
     expect(settings.hooks.BeforeAgent).toHaveLength(1);
     expect(settings.hooks.BeforeTool).toHaveLength(1);
     expect(settings.hooks.AfterAgent).toHaveLength(1);
@@ -19,11 +21,18 @@ describe("Gemini CLI native hooks", () => {
 
   it("maps Gemini agent and tool lifecycle events", () => {
     const now = new Date("2026-08-26T00:00:00Z");
-    expect(geminiHookToEvent({ hook_event_name: "BeforeAgent", prompt: "Improve retrieval" }, now)).toMatchObject({
+    expect(
+      geminiHookToEvent({ hook_event_name: "BeforeAgent", prompt: "Improve retrieval" }, now),
+    ).toMatchObject({
       state: "agent_thinking",
       task: "Improve retrieval",
     });
-    expect(geminiHookToEvent({ hook_event_name: "BeforeTool", tool_input: { command: "pytest" } }, now).state).toBe("running_tests");
-    expect(geminiHookToEvent({ hook_event_name: "AfterAgent" }, now).state).toBe("waiting_for_user");
+    expect(
+      geminiHookToEvent({ hook_event_name: "BeforeTool", tool_input: { command: "pytest" } }, now)
+        .state,
+    ).toBe("running_tests");
+    expect(geminiHookToEvent({ hook_event_name: "AfterAgent" }, now).state).toBe(
+      "waiting_for_user",
+    );
   });
 });

@@ -22,7 +22,12 @@ describe("relevance scoring", () => {
     const repository = { root: "/repo", technologies: ["redis"], dependencies: {} };
     const task = scoreRelevance(story, repository, ["caching"], new Date("2026-08-26"));
     const project = scoreRelevance(story, repository, ["authentication"], new Date("2026-08-26"));
-    const global = scoreRelevance(story, { ...repository, technologies: [] }, [], new Date("2026-08-26"));
+    const global = scoreRelevance(
+      story,
+      { ...repository, technologies: [] },
+      [],
+      new Date("2026-08-26"),
+    );
     expect(task.scope).toBe("task");
     expect(project.scope).toBe("project");
     expect(global.scope).toBe("global");

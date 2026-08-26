@@ -9,7 +9,8 @@ const story: Story = {
   sourceId: "one",
   url: "https://example.com",
   headline: "A useful developer tool release arrives today",
-  summary: "The release improves repository analysis and reduces unnecessary work during long coding sessions. Existing commands stay compatible with the faster implementation.",
+  summary:
+    "The release improves repository analysis and reduces unnecessary work during long coding sessions. Existing commands stay compatible with the faster implementation.",
   whyItMatters: "Developers can spend less time waiting for repeated repository operations.",
   category: "open_source",
   scope: "project",
@@ -24,7 +25,12 @@ describe("terminal renderer", () => {
     const rendered = renderCard(story, { width: 60 });
     expect(rendered.text).toContain("Why it matters:");
     expect(rendered.text).toContain("[E] Explain");
-    expect(rendered.text.trimEnd().split("\n").every((line) => [...line].length <= 60)).toBe(true);
+    expect(
+      rendered.text
+        .trimEnd()
+        .split("\n")
+        .every((line) => [...line].length <= 60),
+    ).toBe(true);
   });
 
   it("removes terminal control injection from external content", () => {

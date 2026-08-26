@@ -13,7 +13,10 @@ describe("repository intelligence", () => {
     await mkdir(nested, { recursive: true });
     await writeFile(
       join(root, "package.json"),
-      JSON.stringify({ dependencies: { next: "15.0.0", "@prisma/client": "6.0.0" }, devDependencies: { typescript: "5" } }),
+      JSON.stringify({
+        dependencies: { next: "15.0.0", "@prisma/client": "6.0.0" },
+        devDependencies: { typescript: "5" },
+      }),
     );
     expect(await findRepositoryRoot(nested)).toBe(root);
     expect(await detectRepository(nested)).toMatchObject({

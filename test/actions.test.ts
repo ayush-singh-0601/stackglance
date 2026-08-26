@@ -10,8 +10,10 @@ const story: Story = {
   sourceId: "one",
   url: "https://example.com/one",
   headline: "Redis release improves common caching workflows",
-  summary: "The release reduces unnecessary network round trips and adds better diagnostics for cache misses. Existing commands remain compatible while applications gain more predictable behavior.",
-  whyItMatters: "This project uses Redis, so the performance change directly affects current API work.",
+  summary:
+    "The release reduces unnecessary network round trips and adds better diagnostics for cache misses. Existing commands remain compatible while applications gain more predictable behavior.",
+  whyItMatters:
+    "This project uses Redis, so the performance change directly affects current API work.",
   category: "project",
   scope: "project",
   publishedAt: "2026-08-26T00:00:00Z",

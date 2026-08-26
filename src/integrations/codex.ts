@@ -3,7 +3,14 @@ import { dirname, join } from "node:path";
 
 import type { AgentEvent, AgentState } from "../core/types.js";
 
-const CODEX_EVENTS = ["SessionStart", "UserPromptSubmit", "PreToolUse", "PostToolUse", "Stop", "SessionEnd"] as const;
+const CODEX_EVENTS = [
+  "SessionStart",
+  "UserPromptSubmit",
+  "PreToolUse",
+  "PostToolUse",
+  "Stop",
+  "SessionEnd",
+] as const;
 
 type CodexEventName = (typeof CODEX_EVENTS)[number];
 
@@ -35,16 +42,28 @@ export async function installCodexHooks(home: string): Promise<string> {
   }
   await mkdir(dirname(path), { recursive: true });
   const temporary = `${path}.${process.pid}.tmp`;
-  await writeFile(temporary, `${JSON.stringify(document, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
+  await writeFile(temporary, `${JSON.stringify(document, null, 2)}\n`, {
+    encoding: "utf8",
+    mode: 0o600,
+  });
   await rename(temporary, path);
   return path;
 }
 
-export function codexHookToEvent(payload: Readonly<Record<string, unknown>>, now = new Date()): AgentEvent {
+export function codexHookToEvent(
+  payload: Readonly<Record<string, unknown>>,
+  now = new Date(),
+): AgentEvent {
   const rawEvent = payload.hook_event_name;
-  const eventName = typeof rawEvent === "string" && CODEX_EVENTS.includes(rawEvent as CodexEventName) ? (rawEvent as CodexEventName) : "SessionStart";
+  const eventName =
+    typeof rawEvent === "string" && CODEX_EVENTS.includes(rawEvent as CodexEventName)
+      ? (rawEvent as CodexEventName)
+      : "SessionStart";
   const state = hookState(eventName, payload);
-  const task = eventName === "UserPromptSubmit" && typeof payload.prompt === "string" ? payload.prompt : undefined;
+  const task =
+    eventName === "UserPromptSubmit" && typeof payload.prompt === "string"
+      ? payload.prompt
+      : undefined;
   return {
     agent: "codex",
     state,
@@ -86,7 +105,15 @@ function createGroup(event: CodexEventName): HookGroup {
 function isDevRadarGroup(value: unknown): boolean {
   if (typeof value !== "object" || value === null) return false;
   const hooks = (value as { hooks?: unknown }).hooks;
-  return Array.isArray(hooks) && hooks.some((hook) => typeof hook === "object" && hook !== null && String((hook as { command?: unknown }).command).includes("devradar hook codex"));
+  return (
+    Array.isArray(hooks) &&
+    hooks.some(
+      (hook) =>
+        typeof hook === "object" &&
+        hook !== null &&
+        String((hook as { command?: unknown }).command).includes("devradar hook codex"),
+    )
+  );
 }
 
 async function readHooks(path: string): Promise<CodexHooksFile> {

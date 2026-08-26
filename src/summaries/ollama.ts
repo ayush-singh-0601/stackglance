@@ -73,6 +73,7 @@ export function validateLocalEndpoint(value: string): URL {
   if (endpoint.protocol !== "http:" || !localHosts.has(endpoint.hostname)) {
     throw new Error("Ollama endpoint must be an HTTP loopback address");
   }
-  if (endpoint.username !== "" || endpoint.password !== "") throw new Error("Ollama endpoint cannot contain credentials");
+  if (endpoint.username !== "" || endpoint.password !== "")
+    throw new Error("Ollama endpoint cannot contain credentials");
   return endpoint;
 }

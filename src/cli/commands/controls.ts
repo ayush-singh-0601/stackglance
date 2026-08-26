@@ -10,7 +10,11 @@ export interface FeedWeights {
   global: number;
 }
 
-export async function setGlobalEnabled(enabled: boolean, context: CliContext, io: CliIo): Promise<number> {
+export async function setGlobalEnabled(
+  enabled: boolean,
+  context: CliContext,
+  io: CliIo,
+): Promise<number> {
   await updateConfig(context.paths.config, (config) => ({ ...config, enabled }));
   io.stdout.write(`DevRadar passive intelligence ${enabled ? "enabled" : "disabled"}.\n`);
   return 0;
@@ -39,26 +43,43 @@ export async function setPaused(
     ...config,
     pausedUntil: pausedUntil?.toISOString() ?? null,
   }));
-  io.stdout.write(pausedUntil === null ? "DevRadar resumed.\n" : `DevRadar paused until ${pausedUntil.toISOString()}.\n`);
+  io.stdout.write(
+    pausedUntil === null
+      ? "DevRadar resumed.\n"
+      : `DevRadar paused until ${pausedUntil.toISOString()}.\n`,
+  );
   return 0;
 }
 
-export async function setFeedWeights(weights: FeedWeights, context: CliContext, io: CliIo): Promise<number> {
-  if (weights.task + weights.project + weights.global !== 100 || Object.values(weights).some((value) => value < 0)) {
+export async function setFeedWeights(
+  weights: FeedWeights,
+  context: CliContext,
+  io: CliIo,
+): Promise<number> {
+  if (
+    weights.task + weights.project + weights.global !== 100 ||
+    Object.values(weights).some((value) => value < 0)
+  ) {
     io.stderr.write("Feed weights must be non-negative and total 100.\n");
     return 2;
   }
   await updateConfig(context.paths.config, (config) => ({ ...config, feed: weights }));
-  io.stdout.write(`Feed weights updated: task ${weights.task}, project ${weights.project}, global ${weights.global}.\n`);
+  io.stdout.write(
+    `Feed weights updated: task ${weights.task}, project ${weights.project}, global ${weights.global}.\n`,
+  );
   return 0;
 }
 
 export async function showStatus(context: CliContext, io: CliIo): Promise<number> {
   const config = await loadConfig(context.paths.config);
   const detected = new Map(detectAgents().map((item) => [item.agent, item.installed]));
-  io.stdout.write(`DevRadar\n\nStatus: ${config.enabled ? "ENABLED" : "DISABLED"}\n\nIntegrations:\n`);
+  io.stdout.write(
+    `DevRadar\n\nStatus: ${config.enabled ? "ENABLED" : "DISABLED"}\n\nIntegrations:\n`,
+  );
   for (const [agent, enabled] of Object.entries(config.agents) as [AgentName, boolean][]) {
-    io.stdout.write(`${enabled && detected.get(agent) ? "✓" : "·"} ${agent}: ${enabled ? "ON" : "OFF"}\n`);
+    io.stdout.write(
+      `${enabled && detected.get(agent) ? "✓" : "·"} ${agent}: ${enabled ? "ON" : "OFF"}\n`,
+    );
   }
   io.stdout.write(`\nPassive intelligence: ${config.enabled ? "ON" : "OFF"}\n`);
   return 0;

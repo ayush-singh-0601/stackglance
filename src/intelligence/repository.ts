@@ -51,9 +51,9 @@ function normalizeTechnology(name: string): string {
   const aliases: Record<string, string> = {
     "@prisma/client": "prisma",
     "@playwright/test": "playwright",
-    "next": "next.js",
-    "react": "react",
-    "typescript": "typescript",
+    next: "next.js",
+    react: "react",
+    typescript: "typescript",
   };
   return aliases[name] ?? name.replace(/^@/, "").split("/")[0]!;
 }

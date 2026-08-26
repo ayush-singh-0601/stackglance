@@ -18,6 +18,10 @@ describe("RSS and Atom ingestion", () => {
       `<feed><entry><id>two</id><title>Research</title><link rel="alternate" href="https://example.com/two"/><summary>Plain summary</summary><updated>2026-08-26T10:00:00Z</updated></entry></feed>`,
       source,
     );
-    expect(stories[0]).toMatchObject({ sourceId: "two", url: "https://example.com/two", body: "Plain summary" });
+    expect(stories[0]).toMatchObject({
+      sourceId: "two",
+      url: "https://example.com/two",
+      body: "Plain summary",
+    });
   });
 });

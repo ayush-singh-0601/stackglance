@@ -38,7 +38,10 @@ export class DeterministicSummarizer implements Summarizer {
   }
 }
 
-export function providerSecret(provider: "deterministic" | "openai" | "ollama", env = process.env): string | undefined {
+export function providerSecret(
+  provider: "deterministic" | "openai" | "ollama",
+  env = process.env,
+): string | undefined {
   return provider === "openai" ? env.OPENAI_API_KEY : undefined;
 }
 

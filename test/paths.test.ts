@@ -18,7 +18,11 @@ describe("resolvePaths", () => {
   });
 
   it("uses the XDG state directory on Unix", () => {
-    const paths = resolvePaths({ env: { XDG_STATE_HOME: "/state" }, home: "/home/dev", platform: "linux" });
+    const paths = resolvePaths({
+      env: { XDG_STATE_HOME: "/state" },
+      home: "/home/dev",
+      platform: "linux",
+    });
     expect(paths.root).toBe(join("/state", "devradar"));
   });
 });

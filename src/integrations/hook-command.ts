@@ -58,13 +58,20 @@ export async function deliverHookEvent(
   return false;
 }
 
-function translate(agent: AgentName, payload: Readonly<Record<string, unknown>>, now: Date): AgentEvent {
+function translate(
+  agent: AgentName,
+  payload: Readonly<Record<string, unknown>>,
+  now: Date,
+): AgentEvent {
   if (agent === "codex") return codexHookToEvent(payload, now);
   if (agent === "claude") return claudeHookToEvent(payload, now);
   if (agent === "gemini") return geminiHookToEvent(payload, now);
   if (agent === "opencode") return openCodeEventToAgentEvent(payload, now);
   const rawState = payload.hook_event_name;
-  const state: AgentState = typeof rawState === "string" && rawState === "waiting_for_user" ? "waiting_for_user" : "agent_thinking";
+  const state: AgentState =
+    typeof rawState === "string" && rawState === "waiting_for_user"
+      ? "waiting_for_user"
+      : "agent_thinking";
   return {
     agent: "aider",
     state,
@@ -79,7 +86,8 @@ async function readHookInput(): Promise<Record<string, unknown>> {
   const chunks: Buffer[] = [];
   for await (const chunk of process.stdin) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk as string));
-    if (chunks.reduce((total, value) => total + value.length, 0) > 64 * 1024) throw new Error("Hook input too large");
+    if (chunks.reduce((total, value) => total + value.length, 0) > 64 * 1024)
+      throw new Error("Hook input too large");
   }
   const text = Buffer.concat(chunks).toString("utf8").trim();
   return text === "" ? {} : (JSON.parse(text) as Record<string, unknown>);
@@ -88,6 +96,10 @@ async function readHookInput(): Promise<Record<string, unknown>> {
 function startDetachedDaemon(): void {
   const entry = process.argv[1];
   if (entry === undefined) return;
-  const child = spawn(process.execPath, [entry, "daemon"], { detached: true, stdio: "ignore", windowsHide: true });
+  const child = spawn(process.execPath, [entry, "daemon"], {
+    detached: true,
+    stdio: "ignore",
+    windowsHide: true,
+  });
   child.unref();
 }

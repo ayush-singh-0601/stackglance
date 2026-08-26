@@ -16,8 +16,10 @@ const story: Story = {
   sourceId: "one",
   url: "https://example.com",
   headline: "Redis release improves common caching workflows",
-  summary: "The release reduces unnecessary network round trips and adds better diagnostics for cache misses. Existing commands remain compatible while applications gain more predictable behavior.",
-  whyItMatters: "This project uses Redis, so the performance change directly affects current API work.",
+  summary:
+    "The release reduces unnecessary network round trips and adds better diagnostics for cache misses. Existing commands remain compatible while applications gain more predictable behavior.",
+  whyItMatters:
+    "This project uses Redis, so the performance change directly affects current API work.",
   category: "project",
   scope: "project",
   publishedAt: "2026-08-26T00:00:00Z",
@@ -40,7 +42,10 @@ describe("manual intelligence commands", () => {
     database.close();
     const stdout: string[] = [];
     const stderr: string[] = [];
-    const io = { stdout: { write: (value: string) => stdout.push(value) }, stderr: { write: (value: string) => stderr.push(value) } };
+    const io = {
+      stdout: { write: (value: string) => stdout.push(value) },
+      stderr: { write: (value: string) => stderr.push(value) },
+    };
     expect(await showFeed(context, io)).toBe(0);
     expect(await showCatchup(context, io)).toBe(0);
     expect(await explainById("one", context, io)).toBe(0);

@@ -19,7 +19,11 @@ const story: StoryCandidate = {
 
 describe("deterministic summaries", () => {
   it("produces one-glance bounded content without an API key", () => {
-    const result = deterministicSummary(story, { root: "/repo", technologies: ["prisma"], dependencies: {} });
+    const result = deterministicSummary(story, {
+      root: "/repo",
+      technologies: ["prisma"],
+      dependencies: {},
+    });
     expect(countWords(result.headline)).toBeLessThanOrEqual(12);
     expect(countWords(result.summary)).toBeGreaterThanOrEqual(20);
     expect(countWords(result.summary)).toBeLessThanOrEqual(45);

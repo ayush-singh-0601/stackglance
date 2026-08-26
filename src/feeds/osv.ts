@@ -29,7 +29,10 @@ export class OsvCollector implements FeedCollector {
   async collect(now = new Date()): Promise<RawStory[]> {
     const dependencies = Object.entries(this.repository.dependencies);
     if (dependencies.length === 0) return [];
-    const queries = dependencies.map(([name, range]) => ({ package: { ecosystem: "npm", name }, version: cleanVersion(range) }));
+    const queries = dependencies.map(([name, range]) => ({
+      package: { ecosystem: "npm", name },
+      version: cleanVersion(range),
+    }));
     const response = await this.fetchText("https://api.osv.dev/v1/querybatch", {
       allowedHosts: ["api.osv.dev"],
       method: "POST",
@@ -38,19 +41,28 @@ export class OsvCollector implements FeedCollector {
     });
     const parsed = JSON.parse(response.body) as OsvBatchResponse;
     return parsed.results.flatMap((result, index) =>
-      (result.vulns ?? []).map((vulnerability) => mapVulnerability(vulnerability, dependencies[index]?.[0] ?? "dependency", now)),
+      (result.vulns ?? []).map((vulnerability) =>
+        mapVulnerability(vulnerability, dependencies[index]?.[0] ?? "dependency", now),
+      ),
     );
   }
 }
 
-function mapVulnerability(vulnerability: OsvVulnerability, dependency: string, now: Date): RawStory {
+function mapVulnerability(
+  vulnerability: OsvVulnerability,
+  dependency: string,
+  now: Date,
+): RawStory {
   const advisory = vulnerability.references?.find(({ type }) => type === "ADVISORY")?.url;
   return {
     source: "OSV",
     sourceId: `${vulnerability.id}:${dependency}`,
     url: advisory ?? `https://osv.dev/vulnerability/${encodeURIComponent(vulnerability.id)}`,
     title: `${vulnerability.id} affects ${dependency}`,
-    body: vulnerability.summary ?? vulnerability.details?.slice(0, 4_000) ?? "A dependency advisory may affect this project.",
+    body:
+      vulnerability.summary ??
+      vulnerability.details?.slice(0, 4_000) ??
+      "A dependency advisory may affect this project.",
     category: "security",
     publishedAt: new Date(vulnerability.published ?? vulnerability.modified).toISOString(),
     fetchedAt: now.toISOString(),
