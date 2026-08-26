@@ -1,0 +1,54 @@
+{
+  "name": "@ayush-singh-0601/devradar",
+  "version": "0.1.0",
+  "description": "Ambient developer intelligence for AI coding CLIs.",
+  "type": "module",
+  "bin": {
+    "devradar": "dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "assets",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22.16.0"
+  },
+  "scripts": {
+    "build": "tsup src/cli.ts src/index.ts --format esm --dts --clean",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "prepack": "npm run verify"
+  },
+  "keywords": [
+    "ai",
+    "cli",
+    "developer-tools",
+    "news",
+    "codex",
+    "claude-code",
+    "gemini-cli"
+  ],
+  "license": "UNLICENSED",
+  "private": false,
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "@types/node": "^22.15.30",
+    "eslint": "^9.34.0",
+    "prettier": "^3.6.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0",
+    "vitest": "^3.2.4"
+  }
+}
