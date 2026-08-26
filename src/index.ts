@@ -12,6 +12,7 @@ export { normalizePtyEnvironment, runObservedCommand } from "./terminal/pty.js";
 export type { ObservedCommandOptions, PtyProcessLike, PtySpawn, PtySpawnOptions } from "./terminal/pty.js";
 export { installShellShims, pathWithShims, pathWithoutShims } from "./integrations/shims.js";
 export type { InstalledShim } from "./integrations/shims.js";
+export { codexHookToEvent, installCodexHooks } from "./integrations/codex.js";
 export { sendIpcRequest, startIpcServer } from "./daemon/ipc.js";
 export type { IpcServer } from "./daemon/ipc.js";
 export { agentEventSchema, ipcRequestSchema } from "./daemon/protocol.js";
