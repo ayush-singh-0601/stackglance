@@ -25,6 +25,7 @@ export interface ObservedCommandOptions {
   input?: NodeJS.ReadStream;
   output?: NodeJS.WriteStream;
   onOutput?: (data: string) => void;
+  transformInput?: (data: string) => string | undefined;
   spawn?: PtySpawn;
 }
 
@@ -46,7 +47,11 @@ export async function runObservedCommand(
   const wasRaw = input.isRaw;
   input.setRawMode?.(true);
   input.resume();
-  const onInput = (data: Buffer | string): void => child.write(typeof data === "string" ? data : data.toString("utf8"));
+  const onInput = (data: Buffer | string): void => {
+    const value = typeof data === "string" ? data : data.toString("utf8");
+    const transformed = options.transformInput?.(value) ?? (options.transformInput === undefined ? value : undefined);
+    if (transformed !== undefined) child.write(transformed);
+  };
   const onResize = (): void => child.resize(output.columns ?? 80, output.rows ?? 24);
   input.on("data", onInput);
   process.on("SIGWINCH", onResize);

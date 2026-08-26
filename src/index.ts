@@ -6,6 +6,8 @@ export type { DevRadarConfig } from "./config/schema.js";
 export { loadConfig, saveConfig, updateConfig } from "./config/store.js";
 export { DevRadarDatabase } from "./storage/database.js";
 export { explainStory, saveStory } from "./cards/actions.js";
+export { CardInteractionController } from "./cards/interaction.js";
+export type { InteractionOptions, InteractionOutput } from "./cards/interaction.js";
 export { clearRenderedCard, renderCard, sanitizeTerminalText } from "./terminal/render.js";
 export type { RenderedCard, RenderOptions } from "./terminal/render.js";
 export { normalizePtyEnvironment, runObservedCommand } from "./terminal/pty.js";
