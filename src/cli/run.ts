@@ -8,6 +8,7 @@ import {
   showStatus,
 } from "./commands/controls.js";
 import { initialize } from "./commands/init.js";
+import { explainById, runDoctor, saveById, showCatchup, showFeed, showImpact } from "./commands/intelligence.js";
 import { createCliContext, type CliContext } from "./context.js";
 
 export interface CliWriter {
@@ -62,7 +63,7 @@ export async function runCli(
     return 0;
   }
 
-  if (command === "init") return initialize(context.paths, io);
+  if (command === "init") return initialize(context.paths, io, { home: context.home ?? undefined });
   if (command === "enable" || command === "disable") {
     const agentIndex = args.indexOf("--agent");
     if (agentIndex >= 0) {
@@ -95,6 +96,12 @@ export async function runCli(
     }
     return setFeedWeights({ task: weights[0]!, project: weights[1]!, global: weights[2]! }, context, io);
   }
+  if (command === "catchup") return showCatchup(context, io);
+  if (command === "feed") return showFeed(context, io);
+  if (command === "impact") return showImpact(context, io);
+  if (command === "explain") return explainById(args[1], context, io);
+  if (command === "save") return saveById(args[1], context, io);
+  if (command === "doctor") return runDoctor(context, io);
 
   io.stderr.write(`Unknown command: ${command}\nRun devradar --help for usage.\n`);
   return 2;

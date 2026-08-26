@@ -4,10 +4,17 @@ import { saveConfig } from "../../config/store.js";
 import type { DevRadarPaths } from "../../core/paths.js";
 import { DevRadarDatabase } from "../../storage/database.js";
 import { installShellShims } from "../../integrations/shims.js";
+import { installCodexHooks } from "../../integrations/codex.js";
+import { installClaudeHooks } from "../../integrations/claude.js";
+import { installGeminiHooks } from "../../integrations/gemini.js";
+import { installOpenCodePlugin } from "../../integrations/opencode.js";
+import { installAiderIntegration } from "../../integrations/aider.js";
+import { homedir } from "node:os";
 import type { CliIo } from "../run.js";
 
 export interface InitDependencies {
   detect?: () => DetectedAgent[];
+  home?: string | undefined;
 }
 
 export async function initialize(
@@ -22,6 +29,17 @@ export async function initialize(
     paths,
     agents.filter(({ installed }) => installed).map(({ agent }) => agent),
   );
+  const home = dependencies.home ?? homedir();
+  const installers = {
+    codex: installCodexHooks,
+    claude: installClaudeHooks,
+    gemini: installGeminiHooks,
+    opencode: installOpenCodePlugin,
+    aider: installAiderIntegration,
+  } as const;
+  for (const { agent, installed } of agents) {
+    if (installed) await installers[agent](home);
+  }
 
   io.stdout.write("DevRadar Setup\n\nDetected:\n");
   for (const { agent, installed } of agents) {
