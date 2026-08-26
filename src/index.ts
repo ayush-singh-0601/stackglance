@@ -24,6 +24,8 @@ export { extractTaskTags } from "./intelligence/task-tags.js";
 export { normalizeStories } from "./intelligence/normalize.js";
 export { scoreRelevance } from "./intelligence/relevance.js";
 export type { RelevanceScore } from "./intelligence/relevance.js";
+export { blendFeed } from "./intelligence/blend.js";
+export type { RankedCandidate } from "./intelligence/blend.js";
 export type { TaskTags } from "./intelligence/task-tags.js";
 export { isPublicIp, safeFetchText, validateRemoteUrl } from "./feeds/safe-fetch.js";
 export type { AddressResolver, ResolvedAddress, SafeFetchOptions, SafeResponse } from "./feeds/safe-fetch.js";
