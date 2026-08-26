@@ -4,6 +4,7 @@ import { isIP } from "node:net";
 
 export interface SafeFetchOptions {
   allowedHosts: readonly string[];
+  headers?: Readonly<Record<string, string>>;
   timeoutMs?: number;
   maxBytes?: number;
   maxRedirects?: number;
@@ -90,12 +91,13 @@ export async function safeFetchText(rawUrl: string, options: SafeFetchOptions): 
   const maxBytes = options.maxBytes ?? 2 * 1024 * 1024;
   const maxRedirects = options.maxRedirects ?? 3;
   const resolve = options.resolve ?? defaultResolver;
-  return fetchValidated(rawUrl, options.allowedHosts, resolve, timeoutMs, maxBytes, maxRedirects);
+  return fetchValidated(rawUrl, options.allowedHosts, options.headers ?? {}, resolve, timeoutMs, maxBytes, maxRedirects);
 }
 
 async function fetchValidated(
   rawUrl: string,
   allowedHosts: readonly string[],
+  headers: Readonly<Record<string, string>>,
   resolve: AddressResolver,
   timeoutMs: number,
   maxBytes: number,
@@ -107,7 +109,7 @@ async function fetchValidated(
     const call = request(
       url,
       {
-        headers: { "accept-encoding": "identity", "user-agent": "DevRadar/0.1" },
+        headers: { "accept-encoding": "identity", "user-agent": "DevRadar/0.1", ...headers },
         lookup: (_hostname, _options, callback) => callback(null, chosen.address, chosen.family),
       },
       (incoming) => {
@@ -137,7 +139,15 @@ async function fetchValidated(
     const location = response.headers.location;
     if (typeof location !== "string") throw new Error("Feed redirect did not include a location");
     if (redirectsLeft <= 0) throw new Error("Feed exceeded redirect limit");
-    return fetchValidated(new URL(location, url).toString(), allowedHosts, resolve, timeoutMs, maxBytes, redirectsLeft - 1);
+    return fetchValidated(
+      new URL(location, url).toString(),
+      allowedHosts,
+      headers,
+      resolve,
+      timeoutMs,
+      maxBytes,
+      redirectsLeft - 1,
+    );
   }
   if (response.status < 200 || response.status >= 300) throw new Error(`Feed returned HTTP ${response.status}`);
   return response;
