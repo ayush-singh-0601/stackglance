@@ -13,6 +13,8 @@ export { startDaemon } from "./daemon/run.js";
 export type { RunningDaemon } from "./daemon/run.js";
 export { acquireSingleton } from "./daemon/singleton.js";
 export type { SingletonLease } from "./daemon/singleton.js";
+export { AgentSessionMachine } from "./runtime/state-machine.js";
+export type { SessionSnapshot, TransitionResult } from "./runtime/state-machine.js";
 export { resolvePaths } from "./core/paths.js";
 export type { DevRadarPaths, PathOptions } from "./core/paths.js";
 export { runCli } from "./cli/run.js";
