@@ -6,6 +6,7 @@ export interface DevRadarPaths {
   config: string;
   database: string;
   runtime: string;
+  bin: string;
   socket: string;
   log: string;
 }
@@ -40,6 +41,7 @@ export function resolvePaths(options: PathOptions = {}): DevRadarPaths {
     config: join(root, "config.yaml"),
     database: join(root, "devradar.sqlite"),
     runtime,
+    bin: join(root, "bin"),
     socket,
     log: join(root, "devradar.log"),
   };
