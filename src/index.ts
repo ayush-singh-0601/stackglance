@@ -32,6 +32,8 @@ export { DeterministicSummarizer, providerSecret, summarySchema, validateSummary
 export type { Summarizer, SummaryInput } from "./summaries/contract.js";
 export { OpenAiSummarizer } from "./summaries/openai.js";
 export type { OpenAiSummarizerOptions } from "./summaries/openai.js";
+export { OllamaSummarizer, validateLocalEndpoint } from "./summaries/ollama.js";
+export type { OllamaSummarizerOptions } from "./summaries/ollama.js";
 export type { TaskTags } from "./intelligence/task-tags.js";
 export { isPublicIp, safeFetchText, validateRemoteUrl } from "./feeds/safe-fetch.js";
 export type { AddressResolver, ResolvedAddress, SafeFetchOptions, SafeResponse } from "./feeds/safe-fetch.js";
