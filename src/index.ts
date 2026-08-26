@@ -1,4 +1,7 @@
 export { packageName, version } from "./meta.js";
+export { configSchema, DEFAULT_CONFIG } from "./config/schema.js";
+export type { DevRadarConfig } from "./config/schema.js";
+export { loadConfig, saveConfig, updateConfig } from "./config/store.js";
 export { resolvePaths } from "./core/paths.js";
 export type { DevRadarPaths, PathOptions } from "./core/paths.js";
 export { runCli } from "./cli/run.js";
