@@ -22,6 +22,6 @@ const smoke = spawnSync(process.execPath, [cli, "--version"], {
   encoding: "utf8",
   windowsHide: true,
 });
-if (smoke.status !== 0 || smoke.stdout.trim() !== "0.1.2") {
+if (smoke.status !== 0 || smoke.stdout.trim() !== "0.1.3") {
   throw new Error(`Packaged CLI smoke test failed: ${smoke.stderr || smoke.stdout}`);
 }

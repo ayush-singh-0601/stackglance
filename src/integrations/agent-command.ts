@@ -121,7 +121,7 @@ export function classifyObservedOutput(agent: AgentName, value: string): AgentSt
   const text = value.toLowerCase();
   if (/\b(waiting for|need clarification|would you like|permission|approve)\b/u.test(text))
     return "waiting_for_user";
-  if (/\b(tests? passed|finished|complete)\b/u.test(text)) return "waiting_for_user";
+  if (/\b(tests? passed|finished|complete|tokens used)\b/u.test(text)) return "waiting_for_user";
   if (/\b(running tests?|vitest|jest|pytest|cargo test)\b/u.test(text)) return "running_tests";
   if (/\b(building|compiling|cargo build|npm run build)\b/u.test(text)) return "building";
   if (/\b(installing|npm install|npm ci|pip install)\b/u.test(text)) return "installing";

@@ -44,6 +44,7 @@ describe("fail-open runtime recovery", () => {
       "waiting_for_user",
     );
     expect(classifyObservedOutput("claude", "Running pytest")).toBe("running_tests");
+    expect(classifyObservedOutput("codex", "tokens used\n9,669")).toBe("waiting_for_user");
   });
 
   it("keeps Codex in the inline screen while preserving explicit arguments", () => {
