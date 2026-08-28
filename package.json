@@ -47,7 +47,7 @@
     "claude-code",
     "gemini-cli"
   ],
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": false,
   "devDependencies": {
     "@eslint/js": "^9.34.0",

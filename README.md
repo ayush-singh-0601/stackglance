@@ -136,4 +136,4 @@ See [architecture](docs/architecture.md) and the [security model](docs/security.
 
 StackGlance is currently version `0.1.0`. Live end-to-end behavior depends on the installed versions and trust/configuration policies of third-party coding CLIs; run `stackglance doctor` after upgrading an agent.
 
-The project is currently marked `UNLICENSED`; no open-source license grant is implied.
+StackGlance is available under the [MIT License](LICENSE).
