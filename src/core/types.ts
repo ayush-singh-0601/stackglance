@@ -17,8 +17,8 @@ export const AGENT_STATES = [
 ] as const;
 export type AgentState = (typeof AGENT_STATES)[number];
 
-export const RADAR_SCOPES = ["task", "project", "global"] as const;
-export type RadarScope = (typeof RADAR_SCOPES)[number];
+export const GLANCE_SCOPES = ["task", "project", "global"] as const;
+export type GlanceScope = (typeof GLANCE_SCOPES)[number];
 
 export const CATEGORIES = [
   "ai",
@@ -74,7 +74,7 @@ export interface Story {
   summary: string;
   whyItMatters: string;
   category: Category;
-  scope: RadarScope;
+  scope: GlanceScope;
   publishedAt: string;
   expiresAt: string;
   relevance: number;
@@ -82,7 +82,7 @@ export interface Story {
   priority?: "low" | "medium" | "high" | "critical";
 }
 
-export interface RadarDecision {
+export interface GlanceDecision {
   show: boolean;
   reason: string;
   story?: Story;

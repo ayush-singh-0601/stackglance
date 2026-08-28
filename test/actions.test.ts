@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Story } from "../src/core/types.js";
 import { explainStory, saveStory } from "../src/cards/actions.js";
-import { DevRadarDatabase } from "../src/storage/database.js";
+import { StackGlanceDatabase } from "../src/storage/database.js";
 
 const story: Story = {
   id: "one",
@@ -31,7 +31,7 @@ describe("progressive story actions", () => {
   });
 
   it("durably saves a known story", () => {
-    const database = new DevRadarDatabase(":memory:");
+    const database = new StackGlanceDatabase(":memory:");
     database.upsertStories([story]);
     expect(saveStory(database, "one")).toEqual(story);
     expect(database.listSavedStories()).toEqual([story]);

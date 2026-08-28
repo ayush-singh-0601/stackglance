@@ -28,7 +28,7 @@ export async function runHookCommand(
     if (event.task !== undefined) event.task = extractTaskTags(event.task).redacted;
     await deliverHookEvent(event, context.paths.socket);
   } catch {
-    // Hooks are advisory. DevRadar never blocks the coding agent.
+    // Hooks are advisory. StackGlance never blocks the coding agent.
   }
   if (agent === "gemini") io.stdout.write("{}\n");
   return 0;

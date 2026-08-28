@@ -8,7 +8,7 @@ import { explainById, saveById, showCatchup, showFeed } from "../src/cli/command
 import type { CliContext } from "../src/cli/context.js";
 import type { Story } from "../src/core/types.js";
 import { resolvePaths } from "../src/core/paths.js";
-import { DevRadarDatabase } from "../src/storage/database.js";
+import { StackGlanceDatabase } from "../src/storage/database.js";
 
 const story: Story = {
   id: "one",
@@ -30,14 +30,14 @@ const story: Story = {
 
 describe("manual intelligence commands", () => {
   it("supports feed, catch-up, explain, and save from cached state", async () => {
-    const root = await mkdtemp(join(tmpdir(), "devradar-commands-"));
+    const root = await mkdtemp(join(tmpdir(), "stackglance-commands-"));
     const context: CliContext = {
-      paths: resolvePaths({ env: { DEVRADAR_HOME: root } }),
+      paths: resolvePaths({ env: { STACKGLANCE_HOME: root } }),
       now: () => new Date("2026-08-27T00:00:00Z"),
       cwd: root,
       home: root,
     };
-    const database = new DevRadarDatabase(context.paths.database);
+    const database = new StackGlanceDatabase(context.paths.database);
     database.upsertStories([story]);
     database.close();
     const stdout: string[] = [];

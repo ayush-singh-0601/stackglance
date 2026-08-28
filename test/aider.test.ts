@@ -8,13 +8,13 @@ import { classifyAiderOutput, installAiderIntegration } from "../src/integration
 
 describe("Aider integration", () => {
   it("configures the documented ready notification without replacing a user command", async () => {
-    const home = await mkdtemp(join(tmpdir(), "devradar-aider-"));
+    const home = await mkdtemp(join(tmpdir(), "stackglance-aider-"));
     expect(await installAiderIntegration(home)).toMatchObject({ notificationConfigured: true });
     expect(await readFile(join(home, ".aider.conf.yml"), "utf8")).toContain(
-      "devradar hook aider waiting_for_user",
+      "stackglance hook aider waiting_for_user",
     );
 
-    const customHome = await mkdtemp(join(tmpdir(), "devradar-aider-custom-"));
+    const customHome = await mkdtemp(join(tmpdir(), "stackglance-aider-custom-"));
     await writeFile(join(customHome, ".aider.conf.yml"), "notifications-command: custom-alert\n");
     expect(await installAiderIntegration(customHome)).toMatchObject({
       notificationConfigured: false,

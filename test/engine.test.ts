@@ -8,8 +8,8 @@ import { DEFAULT_CONFIG } from "../src/config/schema.js";
 import { saveConfig } from "../src/config/store.js";
 import type { Story } from "../src/core/types.js";
 import { resolvePaths } from "../src/core/paths.js";
-import { createRadarHandler } from "../src/runtime/engine.js";
-import { DevRadarDatabase } from "../src/storage/database.js";
+import { createStackGlanceHandler } from "../src/runtime/engine.js";
+import { StackGlanceDatabase } from "../src/storage/database.js";
 
 const story: Story = {
   id: "one",
@@ -31,14 +31,14 @@ const story: Story = {
 
 describe("daemon decision engine", () => {
   it("returns a cached story only after the attention threshold", async () => {
-    const root = await mkdtemp(join(tmpdir(), "devradar-engine-"));
-    const paths = resolvePaths({ env: { DEVRADAR_HOME: root } });
+    const root = await mkdtemp(join(tmpdir(), "stackglance-engine-"));
+    const paths = resolvePaths({ env: { STACKGLANCE_HOME: root } });
     await saveConfig(paths.config, { ...DEFAULT_CONFIG, enabled: true });
-    const database = new DevRadarDatabase(paths.database);
+    const database = new StackGlanceDatabase(paths.database);
     database.upsertStories([story]);
     database.close();
     const now = new Date("2026-08-26T00:00:03.000Z");
-    const handler = createRadarHandler(paths, () => now);
+    const handler = createStackGlanceHandler(paths, () => now);
     const response = await handler({
       type: "event",
       event: {

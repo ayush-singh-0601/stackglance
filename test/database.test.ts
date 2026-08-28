@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { Story } from "../src/core/types.js";
-import { DevRadarDatabase } from "../src/storage/database.js";
+import { StackGlanceDatabase } from "../src/storage/database.js";
 
 const story: Story = {
   id: "story-1",
@@ -19,9 +19,9 @@ const story: Story = {
   tags: ["typescript"],
 };
 
-describe("DevRadarDatabase", () => {
+describe("StackGlanceDatabase", () => {
   it("migrates and round-trips stories", () => {
-    const database = new DevRadarDatabase(":memory:");
+    const database = new StackGlanceDatabase(":memory:");
     database.upsertStories([story]);
     expect(database.getStory("story-1")).toEqual(story);
     expect(database.listStories(new Date("2026-08-27"))).toEqual([story]);
@@ -31,7 +31,7 @@ describe("DevRadarDatabase", () => {
   });
 
   it("stores daemon metadata", () => {
-    const database = new DevRadarDatabase(":memory:");
+    const database = new StackGlanceDatabase(":memory:");
     database.setMetadata("last_fetch", "now");
     expect(database.getMetadata("last_fetch")).toBe("now");
     database.close();

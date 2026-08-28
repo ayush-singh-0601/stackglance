@@ -8,7 +8,7 @@ import { geminiHookToEvent, installGeminiHooks } from "../src/integrations/gemin
 
 describe("Gemini CLI native hooks", () => {
   it("installs idempotent lifecycle hooks in user settings", async () => {
-    const home = await mkdtemp(join(tmpdir(), "devradar-gemini-"));
+    const home = await mkdtemp(join(tmpdir(), "stackglance-gemini-"));
     const path = await installGeminiHooks(home);
     await installGeminiHooks(home);
     const settings = JSON.parse(await readFile(path, "utf8")) as {

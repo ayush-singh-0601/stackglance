@@ -6,15 +6,18 @@ import { resolvePaths } from "../src/core/paths.js";
 
 describe("resolvePaths", () => {
   it("honors an explicit isolated home", () => {
-    const paths = resolvePaths({ env: { DEVRADAR_HOME: join("tmp", "radar") }, platform: "linux" });
-    expect(paths.config).toBe(join("tmp", "radar", "config.yaml"));
-    expect(paths.database).toBe(join("tmp", "radar", "devradar.sqlite"));
+    const paths = resolvePaths({
+      env: { STACKGLANCE_HOME: join("tmp", "stackglance") },
+      platform: "linux",
+    });
+    expect(paths.config).toBe(join("tmp", "stackglance", "config.yaml"));
+    expect(paths.database).toBe(join("tmp", "stackglance", "stackglance.sqlite"));
   });
 
   it("uses a named pipe on Windows", () => {
     const paths = resolvePaths({ env: {}, home: "C:\\Users\\dev", platform: "win32" });
-    expect(paths.socket).toBe("\\\\.\\pipe\\devradar");
-    expect(paths.root).toContain("DevRadar");
+    expect(paths.socket).toBe("\\\\.\\pipe\\stackglance");
+    expect(paths.root).toContain("StackGlance");
   });
 
   it("uses the XDG state directory on Unix", () => {
@@ -23,6 +26,6 @@ describe("resolvePaths", () => {
       home: "/home/dev",
       platform: "linux",
     });
-    expect(paths.root).toBe(join("/state", "devradar"));
+    expect(paths.root).toBe(join("/state", "stackglance"));
   });
 });

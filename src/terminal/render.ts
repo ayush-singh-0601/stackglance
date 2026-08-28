@@ -14,7 +14,7 @@ export interface RenderedCard {
 export function renderCard(story: Story, options: RenderOptions = {}): RenderedCard {
   const width = Math.max(40, Math.min(120, options.width ?? process.stdout.columns ?? 80));
   const inner = width - 4;
-  const label = `${story.scope.toUpperCase()} RADAR · ${categoryLabel(story.category)}`;
+  const label = `STACKGLANCE · ${story.scope.toUpperCase()} · ${categoryLabel(story.category)}`;
   const top = `╭─ ${truncate(label, width - 7)} ${"─".repeat(Math.max(0, width - label.length - 5))}╮`;
   const lines: string[] = [top, ...boxed(wrap(story.headline, inner), inner), empty(inner)];
   if (!options.minimal) {

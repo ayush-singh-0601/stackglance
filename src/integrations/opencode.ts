@@ -3,12 +3,12 @@ import { join } from "node:path";
 
 import type { AgentEvent, AgentState } from "../core/types.js";
 
-const PLUGIN = `export const DevRadarPlugin = async ({ directory }) => ({
+const PLUGIN = `export const StackGlancePlugin = async ({ directory }) => ({
   event: async ({ event }) => {
     try {
       const session = event?.properties?.sessionID ?? event?.properties?.info?.id ?? "opencode-session"
       const child = Bun.spawn(
-        ["devradar", "hook", "opencode", String(event?.type ?? "session.status")],
+        ["stackglance", "hook", "opencode", String(event?.type ?? "session.status")],
         {
           cwd: directory,
           stdin: JSON.stringify({
@@ -23,7 +23,7 @@ const PLUGIN = `export const DevRadarPlugin = async ({ directory }) => ({
       )
       await child.exited
     } catch {
-      // DevRadar is fail-open and never interrupts OpenCode.
+      // StackGlance is fail-open and never interrupts OpenCode.
     }
   },
 })
@@ -31,7 +31,7 @@ const PLUGIN = `export const DevRadarPlugin = async ({ directory }) => ({
 
 export async function installOpenCodePlugin(home: string): Promise<string> {
   const directory = join(home, ".config", "opencode", "plugins");
-  const path = join(directory, "devradar.js");
+  const path = join(directory, "stackglance.js");
   await mkdir(directory, { recursive: true });
   await writeFile(path, PLUGIN, { encoding: "utf8", mode: 0o600 });
   return path;

@@ -62,7 +62,7 @@ export async function sendIpcRequest(
     const socket = createConnection(socketPath);
     let buffer = "";
     const timeout = setTimeout(
-      () => socket.destroy(new Error("DevRadar daemon timed out")),
+      () => socket.destroy(new Error("StackGlance daemon timed out")),
       timeoutMs,
     );
     socket.setEncoding("utf8");

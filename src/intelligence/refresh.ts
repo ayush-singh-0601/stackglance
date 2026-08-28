@@ -1,12 +1,12 @@
 import { loadConfig } from "../config/store.js";
-import type { DevRadarPaths } from "../core/paths.js";
+import type { StackGlancePaths } from "../core/paths.js";
 import type { RepositoryContext, Story } from "../core/types.js";
 import { ArxivCollector } from "../feeds/arxiv.js";
 import { GitHubReleaseCollector } from "../feeds/github.js";
 import { OsvCollector } from "../feeds/osv.js";
 import { RssAtomCollector } from "../feeds/rss.js";
 import type { FeedCollector } from "../feeds/types.js";
-import { DevRadarDatabase } from "../storage/database.js";
+import { StackGlanceDatabase } from "../storage/database.js";
 import { DeterministicSummarizer, providerSecret, type Summarizer } from "../summaries/contract.js";
 import { OllamaSummarizer } from "../summaries/ollama.js";
 import { OpenAiSummarizer } from "../summaries/openai.js";
@@ -29,7 +29,7 @@ export interface CollectionInput {
   taskTags: readonly string[];
   weights: { task: number; project: number; global: number };
   summarizer: Summarizer;
-  database: DevRadarDatabase;
+  database: StackGlanceDatabase;
   now?: Date;
 }
 
@@ -67,7 +67,7 @@ export async function collectAndStore(input: CollectionInput): Promise<RefreshRe
 }
 
 export async function refreshDefaultIntelligence(
-  paths: DevRadarPaths,
+  paths: StackGlancePaths,
   cwd: string,
   task = "",
   env: NodeJS.ProcessEnv = process.env,
@@ -81,7 +81,7 @@ export async function refreshDefaultIntelligence(
     new OsvCollector(repository),
     new ArxivCollector([...taskTags, ...repository.technologies]),
   ];
-  const database = new DevRadarDatabase(paths.database);
+  const database = new StackGlanceDatabase(paths.database);
   try {
     return await collectAndStore({
       collectors,

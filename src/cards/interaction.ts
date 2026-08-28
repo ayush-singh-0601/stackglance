@@ -1,5 +1,5 @@
 import type { Story } from "../core/types.js";
-import type { DevRadarDatabase } from "../storage/database.js";
+import type { StackGlanceDatabase } from "../storage/database.js";
 import { explainStory, saveStory } from "./actions.js";
 
 export interface InteractionOutput {
@@ -7,7 +7,7 @@ export interface InteractionOutput {
 }
 
 export interface InteractionOptions {
-  database: DevRadarDatabase;
+  database: StackGlanceDatabase;
   output: InteractionOutput;
   onHide?: () => void;
 }

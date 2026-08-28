@@ -24,11 +24,11 @@ export async function installClaudeHooks(home: string): Promise<string> {
   settings.hooks ??= {};
   for (const event of CLAUDE_EVENTS) {
     const groups = settings.hooks[event] ?? [];
-    if (!groups.some(isDevRadarGroup)) {
+    if (!groups.some(isStackGlanceGroup)) {
       groups.push({
         matcher: "",
         hooks: [
-          { type: "command", command: `devradar hook claude ${event}`, timeout: 2, async: true },
+          { type: "command", command: `stackglance hook claude ${event}`, timeout: 2, async: true },
         ],
       });
     }
@@ -82,7 +82,7 @@ function stateFor(event: ClaudeEventName, payload: Readonly<Record<string, unkno
   return "idle";
 }
 
-function isDevRadarGroup(value: unknown): boolean {
+function isStackGlanceGroup(value: unknown): boolean {
   if (typeof value !== "object" || value === null) return false;
   const hooks = (value as { hooks?: unknown }).hooks;
   return (
@@ -91,7 +91,7 @@ function isDevRadarGroup(value: unknown): boolean {
       (hook) =>
         typeof hook === "object" &&
         hook !== null &&
-        String((hook as { command?: unknown }).command).includes("devradar hook claude"),
+        String((hook as { command?: unknown }).command).includes("stackglance hook claude"),
     )
   );
 }

@@ -1,4 +1,4 @@
-import type { DevRadarConfig } from "../config/schema.js";
+import type { StackGlanceConfig } from "../config/schema.js";
 import type { AgentEvent, AgentState } from "../core/types.js";
 
 export interface VisibilityDecision {
@@ -8,7 +8,7 @@ export interface VisibilityDecision {
 }
 
 export interface VisibilityInput {
-  config: DevRadarConfig;
+  config: StackGlanceConfig;
   event: AgentEvent;
   stateEnteredAt: string;
   now: Date;
@@ -28,7 +28,7 @@ export function evaluateVisibility({
   stateEnteredAt,
   now,
 }: VisibilityInput): VisibilityDecision {
-  if (!config.enabled) return hidden("DevRadar is disabled");
+  if (!config.enabled) return hidden("StackGlance is disabled");
   if (!config.agents[event.agent]) return hidden(`${event.agent} integration is disabled`);
   if (config.pausedUntil !== null && Date.parse(config.pausedUntil) > now.getTime())
     return hidden("quiet mode is active");

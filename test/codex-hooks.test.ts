@@ -8,7 +8,7 @@ import { codexHookToEvent, installCodexHooks } from "../src/integrations/codex.j
 
 describe("Codex native hooks", () => {
   it("merges lifecycle hooks without replacing user hooks", async () => {
-    const home = await mkdtemp(join(tmpdir(), "devradar-codex-"));
+    const home = await mkdtemp(join(tmpdir(), "stackglance-codex-"));
     await mkdir(join(home, ".codex"));
     await writeFile(
       join(home, ".codex", "hooks.json"),
@@ -29,7 +29,7 @@ describe("Codex native hooks", () => {
     expect(idempotent.hooks.Stop).toHaveLength(2);
   });
 
-  it("maps attention and tool events to DevRadar states", () => {
+  it("maps attention and tool events to StackGlance states", () => {
     const now = new Date("2026-08-26T00:00:00Z");
     expect(
       codexHookToEvent(

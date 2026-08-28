@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Story } from "../src/core/types.js";
 import { CardInteractionController } from "../src/cards/interaction.js";
-import { DevRadarDatabase } from "../src/storage/database.js";
+import { StackGlanceDatabase } from "../src/storage/database.js";
 
 const story: Story = {
   id: "one",
@@ -24,7 +24,7 @@ const story: Story = {
 
 describe("card keyboard interaction", () => {
   it("consumes E and S only while a card is active", () => {
-    const database = new DevRadarDatabase(":memory:");
+    const database = new StackGlanceDatabase(":memory:");
     database.upsertStories([story]);
     const output: string[] = [];
     let hidden = 0;
@@ -45,7 +45,7 @@ describe("card keyboard interaction", () => {
   });
 
   it("hides and forwards ordinary developer input", () => {
-    const database = new DevRadarDatabase(":memory:");
+    const database = new StackGlanceDatabase(":memory:");
     const controller = new CardInteractionController({
       database,
       output: { write: () => undefined },

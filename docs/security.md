@@ -1,6 +1,6 @@
 # Security and privacy model
 
-DevRadar treats news content, agent output, hook payloads, repository manifests, and task text as untrusted input.
+StackGlance treats news content, agent output, hook payloads, repository manifests, and task text as untrusted input.
 
 ## Network boundary
 
@@ -24,6 +24,6 @@ External text is normalized and control characters are removed before rendering.
 
 ## Availability
 
-Agent hooks always return success. IPC failure, source failure, summarizer failure, malformed content, daemon failure, and PTY failure degrade to no card or the original inherited-stdio agent process. DevRadar does not make agent permissions or tool decisions.
+Agent hooks always return success. IPC failure, source failure, summarizer failure, malformed content, daemon failure, and PTY failure degrade to no card or the original inherited-stdio agent process. StackGlance does not make agent permissions or tool decisions.
 
-Run `devradar doctor` to check configuration, storage, detection, and installed integration files.
+Run `stackglance doctor` to check configuration, storage, detection, and installed integration files.

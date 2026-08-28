@@ -17,10 +17,10 @@ export async function installAiderIntegration(home: string): Promise<AiderIntegr
     configuration["notifications-command"] ?? configuration.notifications_command;
   const notificationConfigured =
     existingCommand === undefined ||
-    (typeof existingCommand === "string" && existingCommand.includes("devradar hook aider"));
+    (typeof existingCommand === "string" && existingCommand.includes("stackglance hook aider"));
   if (notificationConfigured) {
     configuration.notifications = true;
-    configuration["notifications-command"] = "devradar hook aider waiting_for_user";
+    configuration["notifications-command"] = "stackglance hook aider waiting_for_user";
     delete configuration.notifications_command;
     const temporary = `${path}.${process.pid}.tmp`;
     await writeFile(temporary, stringify(configuration), { encoding: "utf8", mode: 0o600 });

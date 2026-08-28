@@ -33,11 +33,11 @@ interface CodexHooksFile {
 export async function installCodexHooks(home: string): Promise<string> {
   const path = join(home, ".codex", "hooks.json");
   const document = await readHooks(path);
-  document.description ??= "User lifecycle hooks, including DevRadar ambient intelligence.";
+  document.description ??= "User lifecycle hooks, including StackGlance ambient intelligence.";
   document.hooks ??= {};
   for (const event of CODEX_EVENTS) {
     const existing = document.hooks[event] ?? [];
-    if (!existing.some(isDevRadarGroup)) existing.push(createGroup(event));
+    if (!existing.some(isStackGlanceGroup)) existing.push(createGroup(event));
     document.hooks[event] = existing;
   }
   await mkdir(dirname(path), { recursive: true });
@@ -93,8 +93,8 @@ function createGroup(event: CodexEventName): HookGroup {
     hooks: [
       {
         type: "command",
-        command: `devradar hook codex ${event}`,
-        commandWindows: `devradar hook codex ${event}`,
+        command: `stackglance hook codex ${event}`,
+        commandWindows: `stackglance hook codex ${event}`,
         timeout: event === "SessionEnd" ? 3 : 2,
         async: true,
       },
@@ -102,7 +102,7 @@ function createGroup(event: CodexEventName): HookGroup {
   };
 }
 
-function isDevRadarGroup(value: unknown): boolean {
+function isStackGlanceGroup(value: unknown): boolean {
   if (typeof value !== "object" || value === null) return false;
   const hooks = (value as { hooks?: unknown }).hooks;
   return (
@@ -111,7 +111,7 @@ function isDevRadarGroup(value: unknown): boolean {
       (hook) =>
         typeof hook === "object" &&
         hook !== null &&
-        String((hook as { command?: unknown }).command).includes("devradar hook codex"),
+        String((hook as { command?: unknown }).command).includes("stackglance hook codex"),
     )
   );
 }

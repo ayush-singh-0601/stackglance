@@ -16,7 +16,7 @@ export async function setGlobalEnabled(
   io: CliIo,
 ): Promise<number> {
   await updateConfig(context.paths.config, (config) => ({ ...config, enabled }));
-  io.stdout.write(`DevRadar passive intelligence ${enabled ? "enabled" : "disabled"}.\n`);
+  io.stdout.write(`StackGlance passive intelligence ${enabled ? "enabled" : "disabled"}.\n`);
   return 0;
 }
 
@@ -45,8 +45,8 @@ export async function setPaused(
   }));
   io.stdout.write(
     pausedUntil === null
-      ? "DevRadar resumed.\n"
-      : `DevRadar paused until ${pausedUntil.toISOString()}.\n`,
+      ? "StackGlance resumed.\n"
+      : `StackGlance paused until ${pausedUntil.toISOString()}.\n`,
   );
   return 0;
 }
@@ -74,7 +74,7 @@ export async function showStatus(context: CliContext, io: CliIo): Promise<number
   const config = await loadConfig(context.paths.config);
   const detected = new Map(detectAgents().map((item) => [item.agent, item.installed]));
   io.stdout.write(
-    `DevRadar\n\nStatus: ${config.enabled ? "ENABLED" : "DISABLED"}\n\nIntegrations:\n`,
+    `StackGlance\n\nStatus: ${config.enabled ? "ENABLED" : "DISABLED"}\n\nIntegrations:\n`,
   );
   for (const [agent, enabled] of Object.entries(config.agents) as [AgentName, boolean][]) {
     io.stdout.write(

@@ -1,14 +1,14 @@
 import { startDaemon } from "../../daemon/run.js";
-import { createRadarHandler } from "../../runtime/engine.js";
+import { createStackGlanceHandler } from "../../runtime/engine.js";
 import { loadConfig } from "../../config/store.js";
 import { refreshDefaultIntelligence } from "../../intelligence/refresh.js";
 import type { CliContext } from "../context.js";
 import type { CliIo } from "../run.js";
 
 export async function runDaemonCommand(context: CliContext, io: CliIo): Promise<number> {
-  const daemon = await startDaemon(context.paths, createRadarHandler(context.paths));
+  const daemon = await startDaemon(context.paths, createStackGlanceHandler(context.paths));
   if (daemon.alreadyRunning) return 0;
-  io.stdout.write("DevRadar daemon ready.\n");
+  io.stdout.write("StackGlance daemon ready.\n");
   const config = await loadConfig(context.paths.config);
   const refresh = (): void => {
     void refreshDefaultIntelligence(context.paths, context.cwd ?? process.cwd()).catch(

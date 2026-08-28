@@ -8,7 +8,7 @@ import { acquireSingleton } from "../src/daemon/singleton.js";
 
 describe("daemon singleton", () => {
   it("allows exactly one live lease", async () => {
-    const root = await mkdtemp(join(tmpdir(), "devradar-lock-"));
+    const root = await mkdtemp(join(tmpdir(), "stackglance-lock-"));
     const path = join(root, "daemon.lock");
     const first = await acquireSingleton(path);
     expect(first).toBeDefined();

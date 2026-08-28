@@ -6,7 +6,7 @@ import type { CliContext } from "../cli/context.js";
 import type { CliIo } from "../cli/run.js";
 import type { AgentName, AgentState, Story } from "../core/types.js";
 import { findExecutable } from "../agents/detect.js";
-import { DevRadarDatabase } from "../storage/database.js";
+import { StackGlanceDatabase } from "../storage/database.js";
 import { clearRenderedCard, renderCard } from "../terminal/render.js";
 import { runObservedCommand } from "../terminal/pty.js";
 import { classifyAiderOutput } from "./aider.js";
@@ -21,19 +21,19 @@ export async function runAgentCommand(
   const environment = {
     ...process.env,
     PATH: pathWithoutShims(process.env.PATH, context.paths.bin),
-    DEVRADAR_SHIM_ACTIVE: "1",
+    STACKGLANCE_SHIM_ACTIVE: "1",
   };
   const executable = findExecutable(agent, { env: environment });
   if (executable === undefined) {
     io.stderr.write(
-      `Unable to find the original ${agent} executable outside the DevRadar shim directory.\n`,
+      `Unable to find the original ${agent} executable outside the StackGlance shim directory.\n`,
     );
     return 127;
   }
   const config = await loadConfig(context.paths.config);
   if (!config.enabled || !config.agents[agent]) return runInherited(executable, args, environment);
 
-  const database = new DevRadarDatabase(context.paths.database);
+  const database = new StackGlanceDatabase(context.paths.database);
   const stories = database.listStories(context.now());
   let timer: NodeJS.Timeout | undefined;
   let busy = false;

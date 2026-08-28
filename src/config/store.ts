@@ -3,9 +3,9 @@ import { dirname } from "node:path";
 
 import { parse, stringify } from "yaml";
 
-import { configSchema, DEFAULT_CONFIG, type DevRadarConfig } from "./schema.js";
+import { configSchema, DEFAULT_CONFIG, type StackGlanceConfig } from "./schema.js";
 
-export async function loadConfig(path: string): Promise<DevRadarConfig> {
+export async function loadConfig(path: string): Promise<StackGlanceConfig> {
   try {
     return configSchema.parse(parse(await readFile(path, "utf8")));
   } catch (error) {
@@ -14,7 +14,7 @@ export async function loadConfig(path: string): Promise<DevRadarConfig> {
   }
 }
 
-export async function saveConfig(path: string, config: DevRadarConfig): Promise<void> {
+export async function saveConfig(path: string, config: StackGlanceConfig): Promise<void> {
   const valid = configSchema.parse(config);
   const temporary = `${path}.${process.pid}.tmp`;
   await mkdir(dirname(path), { recursive: true, mode: 0o700 });
@@ -24,8 +24,8 @@ export async function saveConfig(path: string, config: DevRadarConfig): Promise<
 
 export async function updateConfig(
   path: string,
-  update: (config: DevRadarConfig) => DevRadarConfig,
-): Promise<DevRadarConfig> {
+  update: (config: StackGlanceConfig) => StackGlanceConfig,
+): Promise<StackGlanceConfig> {
   const next = configSchema.parse(update(await loadConfig(path)));
   await saveConfig(path, next);
   return next;

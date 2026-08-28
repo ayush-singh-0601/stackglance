@@ -1,12 +1,12 @@
-# DevRadar — News Card Content Requirements
+# StackGlance — News Card Content Requirements
 
 ## 1. Core News-Length Principle
 
-DevRadar must **not display only headlines**.
+StackGlance must **not display only headlines**.
 
 At the same time, it should avoid full paragraphs because developers are supposed to consume the information quickly while their AI coding agent is working.
 
-Every standard DevRadar item should contain:
+Every standard StackGlance item should contain:
 
 ```text
 HEADLINE
@@ -61,11 +61,11 @@ Problem:
 
 The developer stops following their coding workflow and starts reading an article.
 
-DevRadar becomes a distraction.
+StackGlance becomes a distraction.
 
 ---
 
-# 4. Correct DevRadar Format
+# 4. Correct StackGlance Format
 
 ```text
 ╭─ AI RADAR ───────────────────────────────╮
@@ -80,7 +80,7 @@ DevRadar becomes a distraction.
 ╰──────────────────────────────────────────╯
 ```
 
-This should be the standard DevRadar experience.
+This should be the standard StackGlance experience.
 
 ---
 
@@ -95,7 +95,7 @@ PostgreSQL
 Prisma
 ```
 
-DevRadar could show:
+StackGlance could show:
 
 ```text
 ╭─ PROJECT RADAR ──────────────────────────╮
@@ -122,7 +122,7 @@ Agent:
 > Improve our RAG pipeline
 ```
 
-DevRadar:
+StackGlance:
 
 ```text
 ╭─ TASK RADAR ─────────────────────────────╮
@@ -245,7 +245,7 @@ Prefer:
 ╰──────────────────────────────────────────╯
 ```
 
-DevRadar should explain research rather than merely repeat paper abstracts.
+StackGlance should explain research rather than merely repeat paper abstracts.
 
 ---
 
@@ -335,7 +335,7 @@ If the developer wants more:
 [E] Explain
 ```
 
-Then DevRadar expands:
+Then StackGlance expands:
 
 ```text
 What's new
@@ -368,7 +368,7 @@ This prevents the main feed from becoming overwhelming.
 
 # 16. One-Glance Requirement
 
-A developer should be able to look at a DevRadar card for approximately a few seconds and understand:
+A developer should be able to look at a StackGlance card for approximately a few seconds and understand:
 
 ```text
 What happened?
@@ -388,7 +388,7 @@ The desired experience sits exactly between those two extremes.
 
 # 17. Final Card Template
 
-The standard DevRadar card should therefore look like:
+The standard StackGlance card should therefore look like:
 
 ```text
 ╭─ {CATEGORY} RADAR ───────────────────────╮

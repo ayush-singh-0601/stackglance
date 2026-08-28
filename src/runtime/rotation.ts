@@ -1,19 +1,19 @@
-import type { DevRadarConfig } from "../config/schema.js";
-import type { RadarScope } from "../core/types.js";
+import type { StackGlanceConfig } from "../config/schema.js";
+import type { GlanceScope } from "../core/types.js";
 
 export interface RotationSlot {
   show: boolean;
-  scope?: RadarScope;
+  scope?: GlanceScope;
   slot: number;
   remainingMs: number;
 }
 
-const DEFAULT_ORDER: readonly RadarScope[] = ["task", "global", "project"];
+const DEFAULT_ORDER: readonly GlanceScope[] = ["task", "global", "project"];
 
 export function rotationAt(
   elapsedMs: number,
-  display: DevRadarConfig["display"],
-  order: readonly RadarScope[] = DEFAULT_ORDER,
+  display: StackGlanceConfig["display"],
+  order: readonly GlanceScope[] = DEFAULT_ORDER,
 ): RotationSlot {
   if (order.length === 0) return { show: false, slot: 0, remainingMs: display.quietDurationMs };
   const interval = display.cardDurationMs + display.quietDurationMs;

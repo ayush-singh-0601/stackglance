@@ -1,23 +1,23 @@
-# DevRadar — Updated Runtime & Integration Requirements
+# StackGlance — Updated Runtime & Integration Requirements
 
 ## Core UX Principle
 
-DevRadar must behave as a **persistent intelligence layer for AI coding CLIs**.
+StackGlance must behave as a **persistent intelligence layer for AI coding CLIs**.
 
-The developer should **not need to manually start DevRadar whenever they open Codex, Claude Code, Gemini CLI, OpenCode, Aider, or another supported coding agent**.
+The developer should **not need to manually start StackGlance whenever they open Codex, Claude Code, Gemini CLI, OpenCode, Aider, or another supported coding agent**.
 
 There should only be a one-time activation.
 
 ```bash
-devradar enable
+stackglance enable
 ```
 
-After activation, DevRadar automatically works whenever a supported AI CLI is used.
+After activation, StackGlance automatically works whenever a supported AI CLI is used.
 
 To turn it off:
 
 ```bash
-devradar disable
+stackglance disable
 ```
 
 This preference persists across:
@@ -34,19 +34,19 @@ This preference persists across:
 Install:
 
 ```bash
-npm install -g devradar
+npm install -g stackglance
 ```
 
 Initial setup:
 
 ```bash
-devradar init
+stackglance init
 ```
 
 Example:
 
 ```text
-DevRadar Setup
+StackGlance Setup
 
 Detected:
 
@@ -58,7 +58,7 @@ News sources configured.
 
 Project intelligence enabled.
 
-Enable DevRadar automatically
+Enable StackGlance automatically
 for supported AI coding CLIs?
 
 > Yes
@@ -67,10 +67,10 @@ for supported AI coding CLIs?
 This effectively performs:
 
 ```bash
-devradar enable
+stackglance enable
 ```
 
-From this point forward, the developer does not need to run another DevRadar command during normal usage.
+From this point forward, the developer does not need to run another StackGlance command during normal usage.
 
 ---
 
@@ -81,12 +81,12 @@ There are only two primary runtime states.
 ## Enabled
 
 ```bash
-devradar enable
+stackglance enable
 ```
 
 Meaning:
 
-> Automatically activate DevRadar whenever I use a supported AI coding CLI.
+> Automatically activate StackGlance whenever I use a supported AI coding CLI.
 
 Persist locally:
 
@@ -101,12 +101,12 @@ Persist locally:
 ## Disabled
 
 ```bash
-devradar disable
+stackglance disable
 ```
 
 Meaning:
 
-> Do not display DevRadar inside any AI coding CLI.
+> Do not display StackGlance inside any AI coding CLI.
 
 Persist:
 
@@ -119,9 +119,9 @@ Persist:
 The developer can still manually use commands such as:
 
 ```bash
-devradar catchup
-devradar feed
-devradar impact
+stackglance catchup
+stackglance feed
+stackglance impact
 ```
 
 but passive AI-CLI integration remains disabled.
@@ -139,19 +139,19 @@ codex
 No:
 
 ```bash
-devradar start
+stackglance start
 ```
 
 No:
 
 ```bash
-devradar watch
+stackglance watch
 ```
 
 No:
 
 ```bash
-devradar codex
+stackglance codex
 ```
 
 No additional command should be required.
@@ -160,7 +160,7 @@ No additional command should be required.
 
 # 4. Agent-State Awareness
 
-DevRadar should understand the current state of the coding agent.
+StackGlance should understand the current state of the coding agent.
 
 Possible states:
 
@@ -185,7 +185,7 @@ The most important state is:
 AGENT_THINKING
 ```
 
-This is when DevRadar gets screen time.
+This is when StackGlance gets screen time.
 
 ---
 
@@ -201,7 +201,7 @@ $ codex
 ⠋ Thinking...
 ```
 
-DevRadar detects:
+StackGlance detects:
 
 ```text
 STATE = AGENT_THINKING
@@ -212,7 +212,7 @@ After a short delay:
 ```text
 ⠋ Thinking...
 
-╭─ DEVRADAR ────────────────────────────╮
+╭─ STACKGLANCE ────────────────────────────╮
 │ 🎯 RELATED                            │
 │                                       │
 │ Better Auth released a new session    │
@@ -232,7 +232,7 @@ The coding agent continues working underneath.
 
 Not every card needs to relate to the current project.
 
-DevRadar should alternate between:
+StackGlance should alternate between:
 
 ```text
 TASK
@@ -245,7 +245,7 @@ Example:
 ```text
 ⠙ Thinking...
 
-╭─ DEVRADAR · AI ──────────────────────╮
+╭─ STACKGLANCE · AI ──────────────────────╮
 │ New open-source coding model          │
 │ released today.                       │
 │                                       │
@@ -262,7 +262,7 @@ Later:
 ```text
 ⠹ Running tests...
 
-╭─ DEVRADAR · PROJECT ─────────────────╮
+╭─ STACKGLANCE · PROJECT ─────────────────╮
 │ Playwright introduced a new browser   │
 │ testing capability.                   │
 │                                       │
@@ -273,7 +273,7 @@ Later:
 
 ---
 
-# 7. DevRadar Must Disappear When the Agent Needs Attention
+# 7. StackGlance Must Disappear When the Agent Needs Attention
 
 Suppose Codex finishes thinking:
 
@@ -286,10 +286,10 @@ Should authentication support
 Google OAuth as well?
 ```
 
-DevRadar immediately removes/hides its card.
+StackGlance immediately removes/hides its card.
 
 ```text
-DEVRADAR → HIDDEN
+STACKGLANCE → HIDDEN
 ```
 
 Priority should always be:
@@ -299,10 +299,10 @@ Developer input
       ↓
 Coding agent
       ↓
-DevRadar
+StackGlance
 ```
 
-DevRadar must never obscure an important agent question.
+StackGlance must never obscure an important agent question.
 
 ---
 
@@ -315,7 +315,7 @@ AGENT_THINKING
 
         ↓
 
-DevRadar allowed
+StackGlance allowed
 ```
 
 ```text
@@ -323,7 +323,7 @@ RUNNING_TESTS
 
         ↓
 
-DevRadar allowed
+StackGlance allowed
 ```
 
 ```text
@@ -331,7 +331,7 @@ BUILDING / INSTALLING
 
         ↓
 
-DevRadar allowed
+StackGlance allowed
 ```
 
 ```text
@@ -349,7 +349,7 @@ WAITING_FOR_USER
 
         ↓
 
-DevRadar hidden
+StackGlance hidden
 ```
 
 and:
@@ -359,7 +359,7 @@ USER_TYPING
 
         ↓
 
-DevRadar hidden
+StackGlance hidden
 ```
 
 ---
@@ -391,7 +391,7 @@ Example:
 ```text
 Thinking: 1.2 seconds
 
-→ No DevRadar
+→ No StackGlance
 ```
 
 But:
@@ -399,7 +399,7 @@ But:
 ```text
 Thinking: 12 seconds
 
-→ Show DevRadar
+→ Show StackGlance
 ```
 
 ---
@@ -414,7 +414,7 @@ Agent analyzing repository...
 30 seconds
 ```
 
-DevRadar could rotate information slowly.
+StackGlance could rotate information slowly.
 
 ```text
 0-8 sec
@@ -461,7 +461,7 @@ Codex:
 ⠋ Analyzing repository...
 ```
 
-DevRadar:
+StackGlance:
 
 ```text
 ╭─ PROJECT RADAR ──────────────────────╮
@@ -479,7 +479,7 @@ Codex:
 ⠹ Inspecting API routes...
 ```
 
-DevRadar remains unobtrusive.
+StackGlance remains unobtrusive.
 
 Codex starts tests:
 
@@ -487,7 +487,7 @@ Codex starts tests:
 ⠙ Running tests...
 ```
 
-DevRadar:
+StackGlance:
 
 ```text
 ╭─ AI RADAR ──────────────────────────╮
@@ -512,7 +512,7 @@ Would you like me to benchmark the
 old and new implementation?
 ```
 
-DevRadar disappears.
+StackGlance disappears.
 
 ---
 
@@ -521,7 +521,7 @@ DevRadar disappears.
 The architecture should contain:
 
 ```text
-             DevRadar Core
+             StackGlance Core
                    │
          ┌─────────┴──────────┐
          │                    │
@@ -539,12 +539,12 @@ Codex   Claude   Gemini
 During:
 
 ```bash
-devradar init
+stackglance init
 ```
 
-DevRadar installs lightweight integrations for detected coding CLIs.
+StackGlance installs lightweight integrations for detected coding CLIs.
 
-These integrations communicate with the local DevRadar service automatically.
+These integrations communicate with the local StackGlance service automatically.
 
 ---
 
@@ -559,10 +559,10 @@ codex
 rather than:
 
 ```bash
-devradar codex
+stackglance codex
 ```
 
-Internally, DevRadar can use the best integration available for each agent.
+Internally, StackGlance can use the best integration available for each agent.
 
 Priority:
 
@@ -582,7 +582,7 @@ The implementation can differ between coding agents while maintaining identical 
 
 # 14. Shell-Level Integration
 
-For CLIs without sufficient extension APIs, DevRadar's one-time setup may install shell integrations.
+For CLIs without sufficient extension APIs, StackGlance's one-time setup may install shell integrations.
 
 Conceptually:
 
@@ -595,7 +595,7 @@ codex
 The shell integration transparently connects the resulting session to:
 
 ```text
-DevRadar Session Observer
+StackGlance Session Observer
 ```
 
 The developer still experiences:
@@ -609,21 +609,21 @@ normally.
 This configuration happens once during:
 
 ```bash
-devradar init
+stackglance init
 ```
 
 not for every session.
 
 ---
 
-# 15. Local DevRadar Service
+# 15. Local StackGlance Service
 
-DevRadar runs a very lightweight local service.
+StackGlance runs a very lightweight local service.
 
 Example:
 
 ```text
-devradar-daemon
+stackglance-daemon
 ```
 
 Responsibilities:
@@ -652,22 +652,22 @@ It can automatically start when required instead of permanently consuming signif
 
 # 16. Auto-Start Strategy
 
-DevRadar should minimize background resource usage.
+StackGlance should minimize background resource usage.
 
 Preferred behavior:
 
 ```text
 AI CLI starts
       ↓
-DevRadar wakes
+StackGlance wakes
       ↓
 Session active
       ↓
-DevRadar works
+StackGlance works
       ↓
 AI CLI exits
       ↓
-DevRadar returns to idle
+StackGlance returns to idle
 ```
 
 The intelligence/news collector can periodically update a local cache independently.
@@ -688,7 +688,7 @@ An AI CLI adapter could send:
 }
 ```
 
-DevRadar responds:
+StackGlance responds:
 
 ```json
 {
@@ -707,7 +707,7 @@ Once:
 }
 ```
 
-DevRadar responds:
+StackGlance responds:
 
 ```json
 {
@@ -756,7 +756,7 @@ opencode
 
 Works automatically.
 
-One DevRadar installation controls everything.
+One StackGlance installation controls everything.
 
 ---
 
@@ -765,23 +765,23 @@ One DevRadar installation controls everything.
 Main commands:
 
 ```bash
-devradar enable
+stackglance enable
 ```
 
 ```bash
-devradar disable
+stackglance disable
 ```
 
 Optional:
 
 ```bash
-devradar status
+stackglance status
 ```
 
 Example:
 
 ```text
-DevRadar
+StackGlance
 
 Status: ENABLED
 
@@ -806,7 +806,7 @@ ON
 Advanced users can disable only one integration.
 
 ```bash
-devradar disable --agent gemini
+stackglance disable --agent gemini
 ```
 
 while leaving:
@@ -821,7 +821,7 @@ OpenCode    ON
 Enable again:
 
 ```bash
-devradar enable --agent gemini
+stackglance enable --agent gemini
 ```
 
 This is optional functionality and should not complicate initial setup.
@@ -830,18 +830,18 @@ This is optional functionality and should not complicate initial setup.
 
 # 21. Temporary Quiet Mode
 
-Sometimes users may want one clean session without permanently disabling DevRadar.
+Sometimes users may want one clean session without permanently disabling StackGlance.
 
 Optional:
 
 ```bash
-devradar pause
+stackglance pause
 ```
 
 Then:
 
 ```bash
-devradar resume
+stackglance resume
 ```
 
 But these are secondary controls.
@@ -849,11 +849,11 @@ But these are secondary controls.
 Normal users should only need:
 
 ```text
-devradar enable
+stackglance enable
 
         or
 
-devradar disable
+stackglance disable
 ```
 
 ---
@@ -874,7 +874,7 @@ Every supported AI CLI automatically follows those preferences.
 They don't need:
 
 ```bash
-devradar --mode mixed
+stackglance --mode mixed
 ```
 
 for every session.
@@ -883,18 +883,18 @@ for every session.
 
 # 23. Core UX Rule
 
-The ultimate UX should feel as though DevRadar is a capability built directly into the coding agent.
+The ultimate UX should feel as though StackGlance is a capability built directly into the coding agent.
 
 The developer should think:
 
 ```text
-"I installed DevRadar."
+"I installed StackGlance."
 ```
 
 Not:
 
 ```text
-"I have to run DevRadar."
+"I have to run StackGlance."
 ```
 
 ---
@@ -904,19 +904,19 @@ Not:
 ```text
 INSTALL ONCE
 
-npm install -g devradar
+npm install -g stackglance
 
         ↓
 
 SET UP ONCE
 
-devradar init
+stackglance init
 
         ↓
 
 ENABLE ONCE
 
-devradar enable
+stackglance enable
 
         ↓
 
@@ -928,7 +928,7 @@ Developer opens any supported AI CLI
 
         ↓
 
-DevRadar automatically detects it
+StackGlance automatically detects it
 
         ↓
 
@@ -940,7 +940,7 @@ Agent starts thinking
 
         ↓
 
-DevRadar waits briefly
+StackGlance waits briefly
 
         ↓
 
@@ -952,7 +952,7 @@ Agent requires user attention
 
         ↓
 
-DevRadar disappears
+StackGlance disappears
 
         ↓
 
@@ -960,14 +960,14 @@ Agent thinks again
 
         ↓
 
-DevRadar can return
+StackGlance can return
 ```
 
 ---
 
 # 25. Revised Product Positioning
 
-DevRadar is not something the developer actively operates throughout the day.
+StackGlance is not something the developer actively operates throughout the day.
 
 It should function as:
 

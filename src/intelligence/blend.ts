@@ -1,5 +1,5 @@
-import type { DevRadarConfig } from "../config/schema.js";
-import type { RadarScope, StoryCandidate } from "../core/types.js";
+import type { StackGlanceConfig } from "../config/schema.js";
+import type { GlanceScope, StoryCandidate } from "../core/types.js";
 import type { RelevanceScore } from "./relevance.js";
 
 export interface RankedCandidate {
@@ -9,11 +9,11 @@ export interface RankedCandidate {
 
 export function blendFeed(
   items: readonly RankedCandidate[],
-  weights: DevRadarConfig["feed"],
+  weights: StackGlanceConfig["feed"],
   limit = 20,
 ): RankedCandidate[] {
   const unique = [...new Map(items.map((item) => [item.story.id, item])).values()];
-  const groups = new Map<RadarScope, RankedCandidate[]>([
+  const groups = new Map<GlanceScope, RankedCandidate[]>([
     ["task", []],
     ["project", []],
     ["global", []],
@@ -25,7 +25,7 @@ export function blendFeed(
   const count = Math.min(limit, unique.length);
   const quotas = allocateQuotas(count, weights);
   const output: RankedCandidate[] = [];
-  const scopes: RadarScope[] = ["task", "project", "global"];
+  const scopes: GlanceScope[] = ["task", "project", "global"];
   while (output.length < count) {
     let added = false;
     for (const scope of scopes) {
@@ -49,13 +49,13 @@ export function blendFeed(
 
 function allocateQuotas(
   count: number,
-  weights: DevRadarConfig["feed"],
-): Record<RadarScope, number> {
-  const scopes: RadarScope[] = ["task", "project", "global"];
+  weights: StackGlanceConfig["feed"],
+): Record<GlanceScope, number> {
+  const scopes: GlanceScope[] = ["task", "project", "global"];
   const exact = scopes.map((scope) => ({ scope, exact: (weights[scope] / 100) * count }));
   const quotas = Object.fromEntries(
     exact.map(({ scope, exact: value }) => [scope, Math.floor(value)]),
-  ) as Record<RadarScope, number>;
+  ) as Record<GlanceScope, number>;
   let remaining = count - Object.values(quotas).reduce((sum, value) => sum + value, 0);
   for (const { scope } of exact.sort((left, right) => (right.exact % 1) - (left.exact % 1))) {
     if (remaining-- <= 0) break;

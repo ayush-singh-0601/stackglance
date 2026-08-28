@@ -44,9 +44,9 @@ export const configSchema = z.object({
   }),
 });
 
-export type DevRadarConfig = z.infer<typeof configSchema>;
+export type StackGlanceConfig = z.infer<typeof configSchema>;
 
-export const DEFAULT_CONFIG: DevRadarConfig = {
+export const DEFAULT_CONFIG: StackGlanceConfig = {
   version: 1,
   enabled: false,
   pausedUntil: null,

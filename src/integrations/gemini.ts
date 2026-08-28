@@ -24,17 +24,17 @@ export async function installGeminiHooks(home: string): Promise<string> {
   settings.hooks ??= {};
   for (const event of GEMINI_EVENTS) {
     const groups = settings.hooks[event] ?? [];
-    if (!groups.some(isDevRadarGroup)) {
+    if (!groups.some(isStackGlanceGroup)) {
       groups.push({
         matcher: "*",
         sequential: false,
         hooks: [
           {
-            name: `devradar-${event.toLowerCase()}`,
+            name: `stackglance-${event.toLowerCase()}`,
             type: "command",
-            command: `devradar hook gemini ${event}`,
+            command: `stackglance hook gemini ${event}`,
             timeout: 2_000,
-            description: "Send non-blocking agent state to local DevRadar",
+            description: "Send non-blocking agent state to local StackGlance",
           },
         ],
       });
@@ -89,7 +89,7 @@ function stateFor(event: GeminiEventName, payload: Readonly<Record<string, unkno
   return "idle";
 }
 
-function isDevRadarGroup(value: unknown): boolean {
+function isStackGlanceGroup(value: unknown): boolean {
   if (typeof value !== "object" || value === null) return false;
   const hooks = (value as { hooks?: unknown }).hooks;
   return (
@@ -98,7 +98,7 @@ function isDevRadarGroup(value: unknown): boolean {
       (hook) =>
         typeof hook === "object" &&
         hook !== null &&
-        String((hook as { command?: unknown }).command).includes("devradar hook gemini"),
+        String((hook as { command?: unknown }).command).includes("stackglance hook gemini"),
     )
   );
 }

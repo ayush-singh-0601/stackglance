@@ -6,7 +6,7 @@ import type { Story } from "../core/types.js";
 
 const SCHEMA_VERSION = 1;
 
-export class DevRadarDatabase {
+export class StackGlanceDatabase {
   readonly connection: DatabaseSync;
 
   constructor(path: string) {

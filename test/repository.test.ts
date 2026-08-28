@@ -8,7 +8,7 @@ import { detectRepository, findRepositoryRoot } from "../src/intelligence/reposi
 
 describe("repository intelligence", () => {
   it("finds the root and extracts package technologies", async () => {
-    const root = await mkdtemp(join(tmpdir(), "devradar-repo-"));
+    const root = await mkdtemp(join(tmpdir(), "stackglance-repo-"));
     const nested = join(root, "src", "feature");
     await mkdir(nested, { recursive: true });
     await writeFile(

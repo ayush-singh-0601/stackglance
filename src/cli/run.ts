@@ -18,12 +18,12 @@ export interface CliIo {
   stderr: CliWriter;
 }
 
-const HELP = `DevRadar ${version}
+const HELP = `StackGlance ${version}
 
 Ambient developer intelligence for AI coding CLIs.
 
 Usage:
-  devradar <command> [options]
+  stackglance <command> [options]
 
 Commands:
   init       Detect agents and install integrations
@@ -35,8 +35,8 @@ Commands:
   catchup    Show news since the last session
   feed       Browse the current intelligence feed
   impact     Show news affecting the current project
-  explain    Expand a radar card
-  save       Save a radar card
+  explain    Expand a StackGlance card
+  save       Save a StackGlance card
   doctor     Diagnose installed integrations
 
 Options:
@@ -130,6 +130,6 @@ export async function runCli(
     return runHookCommand(agent as AgentName, args[2], context, io);
   }
 
-  io.stderr.write(`Unknown command: ${command}\nRun devradar --help for usage.\n`);
+  io.stderr.write(`Unknown command: ${command}\nRun stackglance --help for usage.\n`);
   return 2;
 }

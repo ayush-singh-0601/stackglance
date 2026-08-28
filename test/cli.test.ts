@@ -19,7 +19,7 @@ describe("runCli", () => {
   it("prints command help by default", async () => {
     const output = capture();
     await expect(runCli([], output.io)).resolves.toBe(0);
-    expect(output.stdout.join("")).toContain("devradar <command>");
+    expect(output.stdout.join("")).toContain("stackglance <command>");
   });
 
   it("prints the package version", async () => {

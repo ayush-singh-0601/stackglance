@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { AGENTS, AGENT_STATES, type AgentEvent, type RadarDecision } from "../core/types.js";
+import { AGENTS, AGENT_STATES, type AgentEvent, type GlanceDecision } from "../core/types.js";
 
 export const agentEventSchema: z.ZodType<AgentEvent> = z.object({
   agent: z.enum(AGENTS),
@@ -18,7 +18,7 @@ export interface IpcRequest {
 
 export interface IpcResponse {
   ok: boolean;
-  decision?: RadarDecision;
+  decision?: GlanceDecision;
   error?: string;
 }
 

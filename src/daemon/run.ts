@@ -1,8 +1,8 @@
 import { mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 
-import type { DevRadarPaths } from "../core/paths.js";
-import { DevRadarDatabase } from "../storage/database.js";
+import type { StackGlancePaths } from "../core/paths.js";
+import { StackGlanceDatabase } from "../storage/database.js";
 import { startIpcServer, type IpcServer } from "./ipc.js";
 import type { IpcRequest, IpcResponse } from "./protocol.js";
 import { acquireSingleton, type SingletonLease } from "./singleton.js";
@@ -13,7 +13,7 @@ export interface RunningDaemon {
 }
 
 export async function startDaemon(
-  paths: DevRadarPaths,
+  paths: StackGlancePaths,
   handler: (request: IpcRequest) => Promise<IpcResponse> | IpcResponse = () => ({
     ok: true,
     decision: { show: false, reason: "no eligible story" },
@@ -24,10 +24,10 @@ export async function startDaemon(
   if (lease === undefined) return { alreadyRunning: true, close: () => Promise.resolve() };
 
   let ipc: IpcServer | undefined;
-  let database: DevRadarDatabase | undefined;
+  let database: StackGlanceDatabase | undefined;
   try {
     if (process.platform !== "win32") await rm(paths.socket, { force: true });
-    database = new DevRadarDatabase(paths.database);
+    database = new StackGlanceDatabase(paths.database);
     ipc = await startIpcServer(paths.socket, handler);
   } catch (error) {
     database?.close();
@@ -39,10 +39,10 @@ export async function startDaemon(
 }
 
 function createRunningDaemon(
-  paths: DevRadarPaths,
+  paths: StackGlancePaths,
   lease: SingletonLease,
   ipc: IpcServer,
-  database: DevRadarDatabase,
+  database: StackGlanceDatabase,
 ): RunningDaemon {
   let closed = false;
   return {

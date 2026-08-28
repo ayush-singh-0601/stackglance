@@ -1,8 +1,8 @@
-import type { RadarScope, RepositoryContext, StoryCandidate } from "../core/types.js";
+import type { GlanceScope, RepositoryContext, StoryCandidate } from "../core/types.js";
 
 export interface RelevanceScore {
   score: number;
-  scope: RadarScope;
+  scope: GlanceScope;
   taskMatches: readonly string[];
   projectMatches: readonly string[];
   recency: number;
@@ -31,7 +31,7 @@ export function scoreRelevance(
   const score = clamp(
     0.15 + taskCoverage * 0.5 + projectCoverage * 0.25 + recency * 0.1 + securityBoost,
   );
-  const scope: RadarScope =
+  const scope: GlanceScope =
     taskMatches.length > 0 ? "task" : projectMatches.length > 0 ? "project" : "global";
   return { score, scope, taskMatches, projectMatches, recency };
 }

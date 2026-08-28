@@ -1,13 +1,16 @@
 import { loadConfig } from "../config/store.js";
-import type { DevRadarPaths } from "../core/paths.js";
-import type { RadarDecision } from "../core/types.js";
-import { DevRadarDatabase } from "../storage/database.js";
+import type { StackGlancePaths } from "../core/paths.js";
+import type { GlanceDecision } from "../core/types.js";
+import { StackGlanceDatabase } from "../storage/database.js";
 import type { IpcRequest, IpcResponse } from "../daemon/protocol.js";
 import { rotationAt } from "./rotation.js";
 import { AgentSessionMachine } from "./state-machine.js";
 import { evaluateVisibility } from "./visibility.js";
 
-export function createRadarHandler(paths: DevRadarPaths, now: () => Date = () => new Date()) {
+export function createStackGlanceHandler(
+  paths: StackGlancePaths,
+  now: () => Date = () => new Date(),
+) {
   const sessions = new AgentSessionMachine();
   return async (request: IpcRequest): Promise<IpcResponse> => {
     try {
@@ -26,11 +29,11 @@ export function createRadarHandler(paths: DevRadarPaths, now: () => Date = () =>
       if (!rotation.show || rotation.scope === undefined) {
         return { ok: true, decision: { show: false, reason: "calm rotation interval" } };
       }
-      const database = new DevRadarDatabase(paths.database);
+      const database = new StackGlanceDatabase(paths.database);
       try {
         const stories = database.listStories(currentTime);
         const story = stories.find((candidate) => candidate.scope === rotation.scope) ?? stories[0];
-        const decision: RadarDecision =
+        const decision: GlanceDecision =
           story === undefined
             ? { show: false, reason: "no cached intelligence" }
             : { show: true, reason: visibility.reason, story };

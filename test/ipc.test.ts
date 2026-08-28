@@ -9,8 +9,8 @@ describe("daemon IPC", () => {
     const token = crypto.randomUUID();
     const socket =
       process.platform === "win32"
-        ? `\\\\.\\pipe\\devradar-${token}`
-        : join("/tmp", `devradar-${token}.sock`);
+        ? `\\\\.\\pipe\\stackglance-${token}`
+        : join("/tmp", `stackglance-${token}.sock`);
     const server = await startIpcServer(socket, (request) => ({
       ok: true,
       decision: { show: request.event.state === "agent_thinking", reason: "test" },

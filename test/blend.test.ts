@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import type { RadarScope, StoryCandidate } from "../src/core/types.js";
+import type { GlanceScope, StoryCandidate } from "../src/core/types.js";
 import { blendFeed, type RankedCandidate } from "../src/intelligence/blend.js";
 
-function item(scope: RadarScope, index: number): RankedCandidate {
+function item(scope: GlanceScope, index: number): RankedCandidate {
   const story: StoryCandidate = {
     id: `${scope}-${index}`,
     source: "test",

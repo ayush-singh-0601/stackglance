@@ -2,7 +2,7 @@ import { appendFile, chmod, mkdir, readFile, writeFile } from "node:fs/promises"
 import { delimiter, join, resolve } from "node:path";
 
 import { AGENTS, type AgentName } from "../core/types.js";
-import type { DevRadarPaths } from "../core/paths.js";
+import type { StackGlancePaths } from "../core/paths.js";
 
 export interface InstalledShim {
   agent: AgentName;
@@ -10,7 +10,7 @@ export interface InstalledShim {
   windows: string;
 }
 
-const ACTIVATION_MARKER = "# >>> devradar >>>";
+const ACTIVATION_MARKER = "# >>> stackglance >>>";
 
 export interface ShellActivationOptions {
   home: string;
@@ -18,7 +18,7 @@ export interface ShellActivationOptions {
 }
 
 export async function installShellShims(
-  paths: DevRadarPaths,
+  paths: StackGlancePaths,
   agents: readonly AgentName[] = AGENTS,
 ): Promise<InstalledShim[]> {
   await mkdir(paths.bin, { recursive: true, mode: 0o700 });
@@ -26,12 +26,12 @@ export async function installShellShims(
   for (const agent of agents) {
     const unix = join(paths.bin, agent);
     const windows = join(paths.bin, `${agent}.cmd`);
-    await writeFile(unix, `#!/bin/sh\nexec devradar agent ${agent} "$@"\n`, {
+    await writeFile(unix, `#!/bin/sh\nexec stackglance agent ${agent} "$@"\n`, {
       encoding: "utf8",
       mode: 0o755,
     });
     await chmod(unix, 0o755);
-    await writeFile(windows, `@echo off\r\ndevradar agent ${agent} %*\r\n`, "utf8");
+    await writeFile(windows, `@echo off\r\nstackglance agent ${agent} %*\r\n`, "utf8");
     installed.push({ agent, unix, windows });
   }
   return installed;
@@ -55,7 +55,7 @@ export function pathWithoutShims(currentPath: string | undefined, shimDirectory:
 }
 
 export async function installShellActivation(
-  paths: DevRadarPaths,
+  paths: StackGlancePaths,
   options: ShellActivationOptions,
 ): Promise<string[]> {
   const platform = options.platform ?? process.platform;
@@ -90,10 +90,10 @@ async function appendActivation(path: string, block: string): Promise<void> {
 
 function posixActivation(bin: string): string {
   const escaped = bin.replaceAll("'", `'\\''`);
-  return `${ACTIVATION_MARKER}\nexport PATH='${escaped}':"$PATH"\n# <<< devradar <<<\n`;
+  return `${ACTIVATION_MARKER}\nexport PATH='${escaped}':"$PATH"\n# <<< stackglance <<<\n`;
 }
 
 function windowsActivation(bin: string): string {
   const escaped = bin.replaceAll("'", "''");
-  return `${ACTIVATION_MARKER}\nif (($env:PATH -split ';') -notcontains '${escaped}') { $env:PATH = '${escaped};' + $env:PATH }\n# <<< devradar <<<\n`;
+  return `${ACTIVATION_MARKER}\nif (($env:PATH -split ';') -notcontains '${escaped}') { $env:PATH = '${escaped};' + $env:PATH }\n# <<< stackglance <<<\n`;
 }

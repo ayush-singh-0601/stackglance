@@ -53,7 +53,7 @@ export class OpenAiSummarizer implements Summarizer {
       text: {
         format: {
           type: "json_schema",
-          name: "devradar_card",
+          name: "stackglance_card",
           strict: true,
           schema: {
             type: "object",

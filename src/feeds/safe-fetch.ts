@@ -135,7 +135,7 @@ async function fetchValidated(
         method,
         headers: {
           "accept-encoding": "identity",
-          "user-agent": "DevRadar/0.1",
+          "user-agent": "StackGlance/0.1",
           ...(body === "" ? {} : { "content-length": Buffer.byteLength(body) }),
           ...headers,
         },

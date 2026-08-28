@@ -1,5 +1,5 @@
 import type { Story } from "../core/types.js";
-import type { DevRadarDatabase } from "../storage/database.js";
+import type { StackGlanceDatabase } from "../storage/database.js";
 
 export function explainStory(story: Story): string {
   const lines = [
@@ -19,7 +19,7 @@ export function explainStory(story: Story): string {
   return `${lines.join("\n")}\n`;
 }
 
-export function saveStory(database: DevRadarDatabase, id: string, savedAt = new Date()): Story {
+export function saveStory(database: StackGlanceDatabase, id: string, savedAt = new Date()): Story {
   const story = database.getStory(id);
   if (story === undefined) throw new Error(`Story not found: ${id}`);
   database.saveStory(id, savedAt);

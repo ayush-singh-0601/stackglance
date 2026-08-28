@@ -8,7 +8,7 @@ import { claudeHookToEvent, installClaudeHooks } from "../src/integrations/claud
 
 describe("Claude Code native hooks", () => {
   it("merges user settings and installs idempotent lifecycle hooks", async () => {
-    const home = await mkdtemp(join(tmpdir(), "devradar-claude-"));
+    const home = await mkdtemp(join(tmpdir(), "stackglance-claude-"));
     await mkdir(join(home, ".claude"));
     await writeFile(
       join(home, ".claude", "settings.json"),

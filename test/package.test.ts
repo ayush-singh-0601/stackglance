@@ -4,7 +4,7 @@ import { packageName, version } from "../src/index.js";
 
 describe("package metadata", () => {
   it("exports the scoped package identity", () => {
-    expect(packageName).toBe("@ayush-singh-0601/devradar");
+    expect(packageName).toBe("stackglance");
     expect(version).toMatch(/^\d+\.\d+\.\d+$/u);
   });
 });

@@ -6,7 +6,7 @@ import { loadConfig } from "../../config/store.js";
 import type { Story } from "../../core/types.js";
 import { detectAgents } from "../../agents/detect.js";
 import { detectRepository } from "../../intelligence/repository.js";
-import { DevRadarDatabase } from "../../storage/database.js";
+import { StackGlanceDatabase } from "../../storage/database.js";
 import type { CliContext } from "../context.js";
 import type { CliIo } from "../run.js";
 
@@ -24,7 +24,7 @@ export function showCatchup(context: CliContext, io: CliIo): Promise<number> {
         .listStories(context.now())
         .filter((story) => Date.parse(story.publishedAt) > Date.parse(since));
       database.setMetadata("last_session", context.now().toISOString());
-      io.stdout.write(`DevRadar catch-up since ${since}\n\n`);
+      io.stdout.write(`StackGlance catch-up since ${since}\n\n`);
       return printStories(stories, io);
     }),
   );
@@ -90,7 +90,7 @@ export async function runDoctor(context: CliContext, io: CliIo): Promise<number>
     io.stdout.write("✗ Configuration invalid\n");
   }
   try {
-    new DevRadarDatabase(context.paths.database).close();
+    new StackGlanceDatabase(context.paths.database).close();
     io.stdout.write("✓ SQLite storage ready\n");
   } catch {
     healthy = false;
@@ -100,7 +100,7 @@ export async function runDoctor(context: CliContext, io: CliIo): Promise<number>
     codex: join(context.home ?? "", ".codex", "hooks.json"),
     claude: join(context.home ?? "", ".claude", "settings.json"),
     gemini: join(context.home ?? "", ".gemini", "settings.json"),
-    opencode: join(context.home ?? "", ".config", "opencode", "plugins", "devradar.js"),
+    opencode: join(context.home ?? "", ".config", "opencode", "plugins", "stackglance.js"),
     aider: join(context.home ?? "", ".aider.conf.yml"),
   };
   for (const agent of detectAgents()) {
@@ -127,9 +127,9 @@ function printStories(stories: readonly Story[], io: CliIo): number {
 
 function withDatabase(
   context: CliContext,
-  operation: (database: DevRadarDatabase) => number,
+  operation: (database: StackGlanceDatabase) => number,
 ): number {
-  const database = new DevRadarDatabase(context.paths.database);
+  const database = new StackGlanceDatabase(context.paths.database);
   try {
     return operation(database);
   } finally {
@@ -138,7 +138,7 @@ function withDatabase(
 }
 
 function missingId(command: string, io: CliIo): number {
-  io.stderr.write(`Usage: devradar ${command} <story-id>\n`);
+  io.stderr.write(`Usage: stackglance ${command} <story-id>\n`);
   return 2;
 }
 

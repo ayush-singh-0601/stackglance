@@ -8,11 +8,11 @@ import { installOpenCodePlugin, openCodeEventToAgentEvent } from "../src/integra
 
 describe("OpenCode plugin", () => {
   it("installs a global fail-open event plugin", async () => {
-    const home = await mkdtemp(join(tmpdir(), "devradar-opencode-"));
+    const home = await mkdtemp(join(tmpdir(), "stackglance-opencode-"));
     const path = await installOpenCodePlugin(home);
     const source = await readFile(path, "utf8");
-    expect(source).toContain("export const DevRadarPlugin");
-    expect(source).toContain('Bun.spawn(\n        ["devradar", "hook", "opencode"');
+    expect(source).toContain("export const StackGlancePlugin");
+    expect(source).toContain('Bun.spawn(\n        ["stackglance", "hook", "opencode"');
     expect(source).toContain("never interrupts OpenCode");
   });
 

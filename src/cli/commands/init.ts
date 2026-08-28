@@ -1,8 +1,8 @@
 import { detectAgents, type DetectedAgent } from "../../agents/detect.js";
 import { DEFAULT_CONFIG } from "../../config/schema.js";
 import { saveConfig } from "../../config/store.js";
-import type { DevRadarPaths } from "../../core/paths.js";
-import { DevRadarDatabase } from "../../storage/database.js";
+import type { StackGlancePaths } from "../../core/paths.js";
+import { StackGlanceDatabase } from "../../storage/database.js";
 import { installShellActivation, installShellShims } from "../../integrations/shims.js";
 import { installCodexHooks } from "../../integrations/codex.js";
 import { installClaudeHooks } from "../../integrations/claude.js";
@@ -18,13 +18,13 @@ export interface InitDependencies {
 }
 
 export async function initialize(
-  paths: DevRadarPaths,
+  paths: StackGlancePaths,
   io: CliIo,
   dependencies: InitDependencies = {},
 ): Promise<number> {
   const agents = (dependencies.detect ?? detectAgents)();
   await saveConfig(paths.config, { ...structuredClone(DEFAULT_CONFIG), enabled: true });
-  new DevRadarDatabase(paths.database).close();
+  new StackGlanceDatabase(paths.database).close();
   await installShellShims(
     paths,
     agents.filter(({ installed }) => installed).map(({ agent }) => agent),
@@ -42,7 +42,7 @@ export async function initialize(
     if (installed) await installers[agent](home);
   }
 
-  io.stdout.write("DevRadar Setup\n\nDetected:\n");
+  io.stdout.write("StackGlance Setup\n\nDetected:\n");
   for (const { agent, installed } of agents) {
     io.stdout.write(`${installed ? "✓" : "·"} ${agent}${installed ? "" : " (not found)"}\n`);
   }

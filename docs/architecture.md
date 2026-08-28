@@ -1,6 +1,6 @@
 # Architecture
 
-DevRadar separates agent observation from intelligence collection so failures in either path cannot interrupt the coding CLI.
+StackGlance separates agent observation from intelligence collection so failures in either path cannot interrupt the coding CLI.
 
 ```text
 Agent hook/plugin/shim
@@ -18,7 +18,7 @@ Adapters translate native lifecycle events into a shared state model. Events are
 
 The daemon uses a per-user named pipe on Windows or Unix-domain socket elsewhere. A lock file enforces one daemon, stale leases are recovered, and hook commands auto-start the service. JSON messages are schema-validated and size-limited.
 
-Transparent shell shims resolve the original executable after removing only the DevRadar shim directory from `PATH`. Enabled sessions use `node-pty`; any bridge failure falls back to an inherited-stdio child process.
+Transparent shell shims resolve the original executable after removing only the StackGlance shim directory from `PATH`. Enabled sessions use `node-pty`; any bridge failure falls back to an inherited-stdio child process.
 
 ## Intelligence
 
@@ -28,4 +28,4 @@ The default summarizer is deterministic. Optional providers implement the same v
 
 ## Persistence
 
-YAML stores human-editable preferences. SQLite stores normalized card-ready stories, saves, and daemon metadata. Both locations are derived from one platform-aware state root and can be overridden with `DEVRADAR_HOME` for testing or isolation.
+YAML stores human-editable preferences. SQLite stores normalized card-ready stories, saves, and daemon metadata. Both locations are derived from one platform-aware state root and can be overridden with `STACKGLANCE_HOME` for testing or isolation.

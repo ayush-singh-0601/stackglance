@@ -9,8 +9,8 @@ import { resolvePaths } from "../src/core/paths.js";
 
 describe("init command", () => {
   it("creates enabled local state and reports detections", async () => {
-    const root = await mkdtemp(`${tmpdir()}\\devradar-init-`);
-    const paths = resolvePaths({ env: { DEVRADAR_HOME: root } });
+    const root = await mkdtemp(`${tmpdir()}\\stackglance-init-`);
+    const paths = resolvePaths({ env: { STACKGLANCE_HOME: root } });
     const output: string[] = [];
     const code = await initialize(
       paths,

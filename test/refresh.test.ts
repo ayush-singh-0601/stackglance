@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { collectAndStore } from "../src/intelligence/refresh.js";
-import { DevRadarDatabase } from "../src/storage/database.js";
+import { StackGlanceDatabase } from "../src/storage/database.js";
 import { DeterministicSummarizer } from "../src/summaries/contract.js";
 
 describe("intelligence refresh pipeline", () => {
   it("isolates collector failures and stores ranked card-ready stories", async () => {
-    const database = new DevRadarDatabase(":memory:");
+    const database = new StackGlanceDatabase(":memory:");
     const report = await collectAndStore({
       collectors: [
         {
