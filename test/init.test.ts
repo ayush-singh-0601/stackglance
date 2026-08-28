@@ -1,5 +1,6 @@
 import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
@@ -9,7 +10,7 @@ import { resolvePaths } from "../src/core/paths.js";
 
 describe("init command", () => {
   it("creates enabled local state and reports detections", async () => {
-    const root = await mkdtemp(`${tmpdir()}\\stackglance-init-`);
+    const root = await mkdtemp(join(tmpdir(), "stackglance-init-"));
     const paths = resolvePaths({ env: { STACKGLANCE_HOME: root } });
     const output: string[] = [];
     const code = await initialize(

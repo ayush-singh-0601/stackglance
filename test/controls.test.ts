@@ -1,5 +1,6 @@
 import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
@@ -15,7 +16,7 @@ import { resolvePaths } from "../src/core/paths.js";
 
 describe("persistent controls", () => {
   it("enables and disables passive intelligence", async () => {
-    const root = await mkdtemp(`${tmpdir()}\\stackglance-controls-`);
+    const root = await mkdtemp(join(tmpdir(), "stackglance-controls-"));
     const context: CliContext = {
       paths: resolvePaths({ env: { STACKGLANCE_HOME: root } }),
       now: () => new Date(),
@@ -33,7 +34,7 @@ describe("persistent controls", () => {
   });
 
   it("changes one agent without changing the global preference", async () => {
-    const root = await mkdtemp(`${tmpdir()}\\stackglance-agent-controls-`);
+    const root = await mkdtemp(join(tmpdir(), "stackglance-agent-controls-"));
     const context: CliContext = {
       paths: resolvePaths({ env: { STACKGLANCE_HOME: root } }),
       now: () => new Date(),
@@ -46,7 +47,7 @@ describe("persistent controls", () => {
   });
 
   it("persists quiet mode and validated feed weights", async () => {
-    const root = await mkdtemp(`${tmpdir()}\\stackglance-quiet-controls-`);
+    const root = await mkdtemp(join(tmpdir(), "stackglance-quiet-controls-"));
     const context: CliContext = {
       paths: resolvePaths({ env: { STACKGLANCE_HOME: root } }),
       now: () => new Date(),
