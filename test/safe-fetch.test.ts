@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isPublicIp, validateRemoteUrl } from "../src/feeds/safe-fetch.js";
+import { createPinnedLookup, isPublicIp, validateRemoteUrl } from "../src/feeds/safe-fetch.js";
 
 describe("safe feed fetching", () => {
   it("rejects private, loopback, metadata, and documentation ranges", () => {
@@ -29,5 +29,25 @@ describe("safe feed fetching", () => {
     ).resolves.toMatchObject({
       url: { hostname: "feeds.example.com" },
     });
+  });
+
+  it("pins the validated address using Node's requested lookup result shape", async () => {
+    const lookup = createPinnedLookup({ address: "1.1.1.1", family: 4 });
+    await expect(
+      new Promise((resolve, reject) => {
+        lookup("feeds.example.com", { all: true }, (error, addresses) => {
+          if (error !== null) reject(error);
+          else resolve(addresses);
+        });
+      }),
+    ).resolves.toEqual([{ address: "1.1.1.1", family: 4 }]);
+    await expect(
+      new Promise((resolve, reject) => {
+        lookup("feeds.example.com", { all: false }, (error, address, family) => {
+          if (error !== null) reject(error);
+          else resolve({ address, family });
+        });
+      }),
+    ).resolves.toEqual({ address: "1.1.1.1", family: 4 });
   });
 });

@@ -1,6 +1,6 @@
 import { lookup as dnsLookup } from "node:dns/promises";
 import { request } from "node:https";
-import { isIP } from "node:net";
+import { isIP, type LookupFunction } from "node:net";
 
 export interface SafeFetchOptions {
   allowedHosts: readonly string[];
@@ -30,6 +30,13 @@ export interface SafeResponse {
   status: number;
   headers: Readonly<Record<string, string | string[] | undefined>>;
   body: string;
+}
+
+export function createPinnedLookup(chosen: ResolvedAddress): LookupFunction {
+  return (_hostname, options, callback) => {
+    if (options.all === true) callback(null, [chosen]);
+    else callback(null, chosen.address, chosen.family);
+  };
 }
 
 export function isPublicIp(address: string): boolean {
@@ -139,7 +146,7 @@ async function fetchValidated(
           ...(body === "" ? {} : { "content-length": Buffer.byteLength(body) }),
           ...headers,
         },
-        lookup: (_hostname, _options, callback) => callback(null, chosen.address, chosen.family),
+        lookup: createPinnedLookup(chosen),
       },
       (incoming) => {
         const chunks: Buffer[] = [];
