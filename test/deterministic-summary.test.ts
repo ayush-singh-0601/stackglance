@@ -30,4 +30,21 @@ describe("deterministic summaries", () => {
     expect(countWords(result.whyItMatters)).toBeLessThanOrEqual(20);
     expect(result.whyItMatters).toContain("prisma");
   });
+
+  it("turns security metadata into an actionable dependency summary", () => {
+    const result = deterministicSummary(
+      {
+        ...story,
+        title: "GHSA-5xrq-8626-4rwp affects vitest",
+        body: "A dependency advisory may affect this project.",
+        category: "security",
+        tags: ["vitest", "security"],
+        metadata: { advisory: "GHSA-5xrq-8626-4rwp", dependency: "vitest" },
+      },
+      { root: "/repo", technologies: ["vitest"], dependencies: { vitest: "^3.2.4" } },
+    );
+    expect(result.headline).toBe("GHSA-5xrq-8626-4rwp flags a security issue in vitest");
+    expect(result.summary).toContain("affected version range");
+    expect(result.whyItMatters).toContain("vitest");
+  });
 });

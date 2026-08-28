@@ -11,7 +11,7 @@ export function deterministicSummary(
   repository?: RepositoryContext,
 ): SummaryResult {
   const headline = ensureMinimum(
-    truncateWords(story.title, 12),
+    truncateWords(headlineFor(story), 12),
     "developer update is now available",
     5,
     12,
@@ -20,8 +20,7 @@ export function deterministicSummary(
     .replace(/\s+/gu, " ")
     .split(/(?<=[.!?])\s+/u)
     .filter(Boolean);
-  const summarySource =
-    sentences.slice(0, 3).join(" ") || `${story.title} was published by ${story.source}.`;
+  const summarySource = summaryFor(story, sentences);
   const summary = ensureMinimum(
     truncateWords(summarySource, 45),
     "The source describes a concrete technical change for current software development workflows and existing projects.",
@@ -38,6 +37,32 @@ export function deterministicSummary(
     20,
   );
   return { headline, summary, whyItMatters };
+}
+
+function headlineFor(story: StoryCandidate): string {
+  if (story.category !== "security") return story.title;
+  const advisory = metadataValue(story, "advisory");
+  const dependency = metadataValue(story, "dependency");
+  if (advisory !== undefined && dependency !== undefined) {
+    return `${advisory} flags a security issue in ${dependency}`;
+  }
+  return story.title;
+}
+
+function summaryFor(story: StoryCandidate, sentences: readonly string[]): string {
+  if (story.category === "security") {
+    const advisory = metadataValue(story, "advisory");
+    const dependency = metadataValue(story, "dependency");
+    if (advisory !== undefined && dependency !== undefined) {
+      return `${story.source} published ${advisory} for ${dependency}. Check the affected version range, exposure conditions, and patched releases before deciding whether this repository requires an immediate dependency upgrade.`;
+    }
+  }
+  return sentences.slice(0, 3).join(" ") || `${story.title} was published by ${story.source}.`;
+}
+
+function metadataValue(story: StoryCandidate, key: string): string | undefined {
+  const value = story.metadata[key];
+  return typeof value === "string" && value.trim() !== "" ? value.trim() : undefined;
 }
 
 function ensureMinimum(value: string, addition: string, minimum: number, maximum: number): string {
