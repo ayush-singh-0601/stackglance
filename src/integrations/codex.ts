@@ -36,8 +36,10 @@ export async function installCodexHooks(home: string): Promise<string> {
   document.description ??= "User lifecycle hooks, including StackGlance ambient intelligence.";
   document.hooks ??= {};
   for (const event of CODEX_EVENTS) {
-    const existing = document.hooks[event] ?? [];
-    if (!existing.some(isStackGlanceGroup)) existing.push(createGroup(event));
+    const existing: unknown[] = document.hooks[event] ?? [];
+    const stackGlanceIndex = existing.findIndex(isStackGlanceGroup);
+    if (stackGlanceIndex < 0) existing.push(createGroup(event));
+    else existing[stackGlanceIndex] = createGroup(event);
     document.hooks[event] = existing;
   }
   await mkdir(dirname(path), { recursive: true });
@@ -96,7 +98,7 @@ function createGroup(event: CodexEventName): HookGroup {
         command: `stackglance hook codex ${event}`,
         commandWindows: `stackglance hook codex ${event}`,
         timeout: event === "SessionEnd" ? 3 : 2,
-        async: true,
+        async: event !== "SessionEnd",
       },
     ],
   };

@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { classifyObservedOutput } from "../src/integrations/agent-command.js";
+import {
+  classifyObservedOutput,
+  observedAgentArguments,
+} from "../src/integrations/agent-command.js";
 import { deliverHookEvent } from "../src/integrations/hook-command.js";
 
 const event = {
@@ -41,5 +44,17 @@ describe("fail-open runtime recovery", () => {
       "waiting_for_user",
     );
     expect(classifyObservedOutput("claude", "Running pytest")).toBe("running_tests");
+  });
+
+  it("keeps Codex in the inline screen while preserving explicit arguments", () => {
+    expect(observedAgentArguments("codex", ["--version"])).toEqual([
+      "--no-alt-screen",
+      "--version",
+    ]);
+    expect(observedAgentArguments("codex", ["--no-alt-screen", "resume"])).toEqual([
+      "--no-alt-screen",
+      "resume",
+    ]);
+    expect(observedAgentArguments("claude", ["--version"])).toEqual(["--version"]);
   });
 });

@@ -46,4 +46,36 @@ describe("Codex native hooks", () => {
     ).toBe("running_tests");
     expect(codexHookToEvent({ hook_event_name: "Stop" }, now).state).toBe("waiting_for_user");
   });
+
+  it("repairs legacy asynchronous SessionEnd hooks", async () => {
+    const home = await mkdtemp(join(tmpdir(), "stackglance-codex-session-end-"));
+    await mkdir(join(home, ".codex"));
+    await writeFile(
+      join(home, ".codex", "hooks.json"),
+      JSON.stringify({
+        hooks: {
+          SessionEnd: [
+            {
+              hooks: [
+                {
+                  type: "command",
+                  command: "stackglance hook codex SessionEnd",
+                  commandWindows: "stackglance hook codex SessionEnd",
+                  timeout: 3,
+                  async: true,
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    );
+
+    const path = await installCodexHooks(home);
+    const document = JSON.parse(await readFile(path, "utf8")) as {
+      hooks: { SessionEnd: Array<{ hooks: Array<{ async: boolean }> }> };
+    };
+    expect(document.hooks.SessionEnd).toHaveLength(1);
+    expect(document.hooks.SessionEnd[0]!.hooks[0]!.async).toBe(false);
+  });
 });

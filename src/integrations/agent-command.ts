@@ -34,7 +34,6 @@ export async function runAgentCommand(
   if (!config.enabled || !config.agents[agent]) return runInherited(executable, args, environment);
 
   const database = new StackGlanceDatabase(context.paths.database);
-  const stories = database.listStories(context.now());
   let timer: NodeJS.Timeout | undefined;
   let busy = false;
   let renderedLines = 0;
@@ -54,7 +53,12 @@ export async function runAgentCommand(
     timer = undefined;
   };
   const showNext = (): void => {
-    if (!busy || stories.length === 0) return;
+    if (!busy) return;
+    const stories = database.listStories(context.now());
+    if (stories.length === 0) {
+      timer = setTimeout(showNext, Math.min(config.display.quietDurationMs, 2_000));
+      return;
+    }
     const story = stories[storyIndex % stories.length] as Story;
     storyIndex += 1;
     const card = renderCard(story, { width: output.columns ?? 80 });
@@ -84,7 +88,7 @@ export async function runAgentCommand(
   };
 
   try {
-    return await runObservedCommand(executable, args, {
+    return await runObservedCommand(executable, observedAgentArguments(agent, args), {
       cwd: context.cwd ?? process.cwd(),
       env: environment,
       onOutput: (value) => enterState(classifyObservedOutput(agent, value)),
@@ -102,6 +106,14 @@ export async function runAgentCommand(
     controller.hide();
     database.close();
   }
+}
+
+export function observedAgentArguments(
+  agent: AgentName,
+  args: readonly string[],
+): readonly string[] {
+  if (agent !== "codex" || args.includes("--no-alt-screen")) return args;
+  return ["--no-alt-screen", ...args];
 }
 
 export function classifyObservedOutput(agent: AgentName, value: string): AgentState | undefined {
