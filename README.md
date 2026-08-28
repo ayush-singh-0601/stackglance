@@ -1,92 +1,143 @@
-# StackGlance
+<div align="center">
+  <img src="https://raw.githubusercontent.com/ayush-singh-0601/stackglance/main/assets/stackglance-hero.svg" alt="StackGlance — ambient developer intelligence for AI coding CLIs" width="100%" />
 
-StackGlance is an ambient developer-intelligence layer for AI coding CLIs. Install it once, enable it once, then keep using Codex, Claude Code, Gemini CLI, OpenCode, or Aider normally. During longer thinking, test, build, and install phases, StackGlance uses otherwise idle terminal time for compact task-, project-, and global-relevant updates. It gets out of the way as soon as the agent needs developer attention.
+  <br />
 
-This repository implements the two included product requirements as a local-first Node.js CLI. The default path uses deterministic summaries and requires no model API key.
+[![npm version](https://img.shields.io/npm/v/stackglance?style=flat-square&color=6366f1)](https://www.npmjs.com/package/stackglance)
+[![CI](https://img.shields.io/github/actions/workflow/status/ayush-singh-0601/stackglance/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/ayush-singh-0601/stackglance/actions/workflows/ci.yml)
+[![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A522.16-22c55e?style=flat-square)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b?style=flat-square)](LICENSE)
+
+**Stay current without leaving your coding flow.**
+
+[Quick start](#quick-start) · [Real example](#a-real-example-not-a-mock) · [Commands](#commands) · [How it works](#how-it-works)
+</div>
+
+StackGlance is a local-first intelligence layer for AI coding terminals. While your coding agent is thinking, testing, building, or installing, StackGlance uses that idle screen time to show compact updates relevant to your task and repository. The card disappears as soon as you type or the agent needs attention.
+
+No dashboard. No workflow change. No model API key required by default.
+
+## Why StackGlance
+
+| Without StackGlance                                                     | With StackGlance                                                      |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Release notes, advisories, and ecosystem changes live in separate tabs. | Relevant signals arrive inside the terminal you already use.          |
+| Generic feeds create noise.                                             | Task, manifests, dependencies, and saved preferences shape relevance. |
+| Background tools can interrupt the agent.                               | Cards are advisory, input-aware, and fail open.                       |
+
+Works with **Codex**, **Claude Code**, **Gemini CLI**, **OpenCode**, and **Aider**.
 
 ## Quick start
 
-Requirements: Node.js 22.16 or newer.
+Requires Node.js 22.16 or newer.
 
 ```bash
 npm install -g stackglance
 stackglance init
 ```
 
-Open a new terminal after setup, then run a supported coding agent exactly as before:
+Open a new terminal, then launch your coding agent exactly as you do today:
 
 ```bash
-codex
-claude
-gemini
-opencode
-aider
+codex        # or: claude, gemini, opencode, aider
 ```
 
-`stackglance init` detects installed agents, creates private local state, installs idempotent native hooks/plugins where available, creates transparent shell shims, activates those shims in PowerShell/POSIX shell profiles, and enables passive intelligence. Codex requires reviewing newly installed user hooks once through `/hooks`, as required by Codex's hook trust model.
+That is the complete setup. `stackglance init` detects supported agents, creates private local state, installs the strongest available integration, and enables passive intelligence. Codex users review newly installed user hooks once through `/hooks`, following Codex's trust flow.
 
-To stop passive cards globally:
+Useful first checks:
 
 ```bash
-stackglance disable
+stackglance status
+stackglance doctor
+stackglance impact
 ```
 
-Manual intelligence commands continue to work while passive mode is disabled.
+## A real example, not a mock
 
-## Experience
+On **28 August 2026**, StackGlance ran against this repository while the task was `Fix Linux CI paths and publish StackGlance`. The live pipeline collected **1,083** items from its configured sources, stored the top **25**, and completed with **0 collector errors**.
 
-Cards appear only after the configured 2–4 second busy threshold. The default is three seconds. A card stays for eight seconds, followed by twelve quiet seconds before another scope may rotate in.
+It matched this repository's Vitest dependency to a real OSV advisory and rendered:
 
 ```text
-╭─ STACKGLANCE · PROJECT · OPEN SOURCE ─────────────────╮
-│ Prisma introduces a faster query optimizer             │
-│                                                       │
-│ The release improves batching and removes unnecessary  │
-│ database round trips. Existing APIs remain compatible. │
-│                                                       │
-│ Why it matters: This project currently uses Prisma.    │
-│                                                       │
-│ Relevance: 91%                                        │
-│                                                       │
-│ [E] Explain   [S] Save                                │
-╰───────────────────────────────────────────────────────╯
+╭─ STACKGLANCE · PROJECT · SECURITY ───────────────────────────────────╮
+│ GHSA-5xrq-8626-4rwp flags a security issue in vitest                 │
+│                                                                      │
+│ OSV published GHSA-5xrq-8626-4rwp for vitest. Check the affected     │
+│ version range, exposure conditions, and patched releases before      │
+│ deciding whether this repository requires an immediate dependency    │
+│ upgrade.                                                             │
+│                                                                      │
+│ Why it matters: This project uses vitest; verify the installed       │
+│ version and remediation.                                             │
+│                                                                      │
+│ Priority: HIGH                                                       │
+│                                                                      │
+│ [E] Explain   [S] Save                                               │
+╰──────────────────────────────────────────────────────────────────────╯
 ```
 
-Cards are hidden for typing, questions, permission requests, completion, and errors. Terminal content is sanitized before rendering, and ordinary input immediately restores priority to the coding agent.
+The useful outcome was not a reflexive upgrade. The [advisory](https://github.com/advisories/GHSA-5xrq-8626-4rwp) showed that affected Vitest 3.x releases were patched in `3.2.6`; this repository's lockfile resolved `3.2.7`, so the developer could confirm it was already remediated and continue the release without an unnecessary dependency change. See the [captured OSV record](https://osv.dev/vulnerability/GHSA-5xrq-8626-4rwp).
+
+The repository includes the exact [capture script](scripts/capture-readme-example.mjs). It builds isolated temporary state and cleans it afterward; because it queries live sources, future rankings and counts will naturally change.
+
+```bash
+npm run build
+node scripts/capture-readme-example.mjs
+```
 
 ## Commands
 
-```text
-stackglance init                         One-time detection and integration setup
-stackglance enable                       Enable passive intelligence globally
-stackglance disable                      Disable passive intelligence globally
-stackglance enable --agent gemini        Enable one agent integration
-stackglance disable --agent gemini       Disable one agent integration
-stackglance pause --minutes 60           Temporarily silence cards
-stackglance resume                       End quiet mode
-stackglance feed --weights 45,30,25      Set task/project/global percentages
-stackglance status                       Show persisted state and integrations
-stackglance catchup                      Show news since the last session
-stackglance feed                         Browse cached intelligence
-stackglance impact                       Show items affecting the current project
-stackglance explain <story-id>           Expand a card into progressive detail
-stackglance save <story-id>              Save a story in local SQLite storage
-stackglance doctor                       Diagnose state, storage, and integrations
+| Command                          | What it does                                    |
+| -------------------------------- | ----------------------------------------------- |
+| `stackglance init`               | Detect agents and install integrations once.    |
+| `stackglance status`             | Show persisted state and integration status.    |
+| `stackglance impact`             | Show current items that affect this project.    |
+| `stackglance catchup`            | Review news since the previous session.         |
+| `stackglance feed`               | Browse cached intelligence.                     |
+| `stackglance explain <story-id>` | Expand a card into technical detail and impact. |
+| `stackglance save <story-id>`    | Save a useful story locally.                    |
+| `stackglance pause --minutes 60` | Silence passive cards temporarily.              |
+| `stackglance resume`             | End quiet mode.                                 |
+| `stackglance enable` / `disable` | Control passive intelligence globally.          |
+| `stackglance doctor`             | Diagnose state, storage, and integrations.      |
+
+Adjust the task/project/global mix at any time:
+
+```bash
+stackglance feed --weights 45,30,25
 ```
 
-## Intelligence pipeline
+## How it works
 
-StackGlance safely collects RSS/Atom feeds, GitHub releases, OSV dependency advisories, and task/project-relevant arXiv results. Remote fetching is HTTPS-only and protected by exact host allowlists, public-address validation, pinned DNS resolution, redirect revalidation, timeouts, and response-size limits.
+```text
+RSS / GitHub / OSV / arXiv
+            │
+            ▼
+  normalize · deduplicate · expire
+            │
+            ▼
+ task + repository relevance scoring
+            │
+            ▼
+ compact card during agent idle time
+```
 
-Raw items are normalized, canonicalized, deduplicated, expired, scored, and blended according to persistent weights. Repository relevance comes from local manifests such as `package.json`, `pyproject.toml`, `Cargo.toml`, and `go.mod`. Task text is normalized and redacted for credentials, emails, and local paths before tags are used.
+StackGlance reads local manifests such as `package.json`, `pyproject.toml`, `Cargo.toml`, and `go.mod`. It safely collects RSS/Atom feeds, GitHub releases, OSV advisories, and relevant arXiv results, then normalizes, deduplicates, scores, and stores the most useful items in local SQLite.
 
-Default sources and refresh frequency live in the YAML configuration. Collector failures are isolated; one unavailable source cannot interrupt an agent or discard successful results.
+The default deterministic summarizer is API-key-free. Optional OpenAI and local Ollama summarizers are supported through configuration.
 
-## Configuration
+## Designed to stay out of the way
 
-State is stored under `%LOCALAPPDATA%\StackGlance` on Windows or `$XDG_STATE_HOME/stackglance` on Unix. Set `STACKGLANCE_HOME` to isolate or relocate all state.
+- **Input-aware:** cards are hidden for typing, questions, permissions, completion, and errors.
+- **Fail-open:** integration, daemon, IPC, or rendering failures never replace the agent's exit status.
+- **Local-first:** configuration, cached stories, and preferences stay in local state.
+- **Defensive fetching:** HTTPS allowlists, public-address validation, pinned DNS, redirect checks, timeouts, and response-size limits protect remote collection.
+- **Privacy-conscious:** task context is normalized and redacted before tags are used; OpenAI summaries use structured output with `store: false`.
 
-The generated `config.yaml` includes:
+State lives under `%LOCALAPPDATA%\StackGlance` on Windows or `$XDG_STATE_HOME/stackglance` on Unix. Set `STACKGLANCE_HOME` to isolate or relocate it.
+
+<details>
+<summary><strong>Configuration example</strong></summary>
 
 ```yaml
 enabled: true
@@ -105,35 +156,22 @@ sources:
   refreshMinutes: 30
 ```
 
-For optional OpenAI summaries, set `summarizer.provider` and `summarizer.model`, then export `OPENAI_API_KEY`. StackGlance uses the Responses API with strict structured output and `store: false`; the key is read only from the environment and is never written to configuration or SQLite.
+For OpenAI summaries, set the provider and model, then export `OPENAI_API_KEY`. For Ollama, use an HTTP loopback endpoint such as `http://127.0.0.1:11434`; non-loopback endpoints are rejected.
 
-For local summaries, set the provider to `ollama`, choose a model, and set `endpoint` to an HTTP loopback address such as `http://127.0.0.1:11434`. Non-loopback Ollama endpoints are rejected.
-
-## Integration strategy
-
-StackGlance chooses the strongest available integration while keeping the same command-line experience:
-
-1. Native lifecycle hooks for Codex, Claude Code, and Gemini CLI.
-2. A global event plugin for OpenCode.
-3. Aider's documented ready notification command plus PTY observation.
-4. Transparent shell shims and a cross-platform pseudo-terminal observer as the universal display path.
-
-All hook delivery is advisory and fail-open. If the local daemon is absent, hooks start it and retry briefly. If StackGlance, IPC, configuration, rendering, or a PTY bridge fails, the original agent is launched with inherited stdio and its exit status remains authoritative.
+</details>
 
 ## Development
 
 ```bash
+git clone https://github.com/ayush-singh-0601/stackglance.git
+cd stackglance
 npm install
 npm run verify
 npm pack --dry-run
 ```
 
-`npm run verify` runs ESLint, strict TypeScript checking, Vitest, declaration generation, and a packaged CLI smoke test. CI repeats verification on Windows, Linux, and macOS with Node 22.16.
+CI verifies Windows, Linux, and macOS on Node 22.16. Read the [architecture](docs/architecture.md) and [security model](docs/security.md) before making larger changes.
 
-See [architecture](docs/architecture.md) and the [security model](docs/security.md) for implementation details.
+## License
 
-## Project status
-
-StackGlance is currently version `0.1.0`. Live end-to-end behavior depends on the installed versions and trust/configuration policies of third-party coding CLIs; run `stackglance doctor` after upgrading an agent.
-
-StackGlance is available under the [MIT License](LICENSE).
+StackGlance is open source under the [MIT License](LICENSE).

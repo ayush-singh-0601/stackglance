@@ -1,0 +1,144 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1200"
+  height="420"
+  viewBox="0 0 1200 420"
+  role="img"
+  aria-labelledby="title description"
+>
+  <title id="title">StackGlance</title>
+  <desc id="description">Ambient developer intelligence for AI coding terminals</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#080d1d" />
+      <stop offset="0.52" stop-color="#101737" />
+      <stop offset="1" stop-color="#171143" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#67e8f9" />
+      <stop offset="0.48" stop-color="#818cf8" />
+      <stop offset="1" stop-color="#c084fc" />
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop stop-color="#6366f1" stop-opacity=".38" />
+      <stop offset="1" stop-color="#6366f1" stop-opacity="0" />
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#020617" flood-opacity=".62" />
+    </filter>
+    <clipPath id="rounded"><rect width="1200" height="420" rx="28" /></clipPath>
+  </defs>
+  <g clip-path="url(#rounded)">
+    <rect width="1200" height="420" fill="url(#background)" />
+    <circle cx="185" cy="-15" r="290" fill="url(#glow)" />
+    <circle cx="1120" cy="430" r="330" fill="url(#glow)" opacity=".8" />
+    <path
+      d="M0 335 C210 260 360 440 600 340 S960 245 1200 330"
+      fill="none"
+      stroke="#818cf8"
+      stroke-opacity=".1"
+      stroke-width="2"
+    />
+    <path
+      d="M0 366 C250 280 430 462 690 360 S1010 275 1200 352"
+      fill="none"
+      stroke="#67e8f9"
+      stroke-opacity=".08"
+      stroke-width="2"
+    />
+    <g transform="translate(68 72)">
+      <g transform="translate(0 2)">
+        <rect width="48" height="48" rx="13" fill="#121a38" stroke="#818cf8" stroke-opacity=".7" />
+        <path
+          d="M14 15h20M14 24h14M14 33h20"
+          fill="none"
+          stroke="url(#accent)"
+          stroke-width="4"
+          stroke-linecap="round"
+        />
+        <circle cx="34" cy="24" r="3" fill="#c084fc" />
+      </g>
+      <text
+        x="65"
+        y="42"
+        fill="#f8fafc"
+        font-family="Inter,Segoe UI,Arial,sans-serif"
+        font-size="54"
+        font-weight="760"
+        letter-spacing="-1.7"
+      >
+        StackGlance
+      </text>
+      <rect y="68" width="392" height="4" rx="2" fill="url(#accent)" />
+      <text
+        y="118"
+        fill="#cbd5e1"
+        font-family="Inter,Segoe UI,Arial,sans-serif"
+        font-size="24"
+        font-weight="500"
+      >
+        Ambient intelligence for AI coding CLIs.
+      </text>
+      <text y="153" fill="#94a3b8" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="17">
+        Useful context appears while your agent is busy—
+      </text>
+      <text y="179" fill="#94a3b8" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="17">
+        then disappears the moment you need the terminal.
+      </text>
+      <g
+        transform="translate(0 226)"
+        font-family="Inter,Segoe UI,Arial,sans-serif"
+        font-size="14"
+        font-weight="650"
+      >
+        <g>
+          <rect width="119" height="35" rx="17.5" fill="#17203e" stroke="#334155" />
+          <circle cx="19" cy="17.5" r="5" fill="#67e8f9" />
+          <text x="33" y="22" fill="#e2e8f0">LOCAL-FIRST</text>
+        </g>
+        <g transform="translate(131)">
+          <rect width="138" height="35" rx="17.5" fill="#17203e" stroke="#334155" />
+          <circle cx="19" cy="17.5" r="5" fill="#818cf8" />
+          <text x="33" y="22" fill="#e2e8f0">ZERO-KEY MODE</text>
+        </g>
+        <g transform="translate(281)">
+          <rect width="110" height="35" rx="17.5" fill="#17203e" stroke="#334155" />
+          <circle cx="19" cy="17.5" r="5" fill="#c084fc" />
+          <text x="33" y="22" fill="#e2e8f0">FAIL-OPEN</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(690 52)" filter="url(#shadow)">
+      <rect width="447" height="316" rx="18" fill="#0a1025" stroke="#475569" stroke-opacity=".8" />
+      <path d="M0 52h447" stroke="#334155" />
+      <circle cx="25" cy="26" r="6" fill="#fb7185" />
+      <circle cx="45" cy="26" r="6" fill="#fbbf24" />
+      <circle cx="65" cy="26" r="6" fill="#4ade80" />
+      <text
+        x="224"
+        y="31"
+        text-anchor="middle"
+        fill="#64748b"
+        font-family="ui-monospace,SFMono-Regular,Consolas,monospace"
+        font-size="12"
+      >
+        stackglance · project signal
+      </text>
+      <g transform="translate(28 80)" font-family="ui-monospace,SFMono-Regular,Consolas,monospace">
+        <text fill="#67e8f9" font-size="12" font-weight="700">PROJECT · SECURITY</text>
+        <text y="34" fill="#f8fafc" font-size="16" font-weight="700">A dependency advisory</text>
+        <text y="56" fill="#f8fafc" font-size="16" font-weight="700">matches your repository.</text>
+        <text y="94" fill="#94a3b8" font-size="13">Check affected versions and patched</text>
+        <text y="114" fill="#94a3b8" font-size="13">releases before changing the lockfile.</text>
+        <rect y="142" width="391" height="1" fill="#334155" />
+        <text y="173" fill="#cbd5e1" font-size="12">WHY IT MATTERS</text>
+        <text y="198" fill="#e2e8f0" font-size="13">This project uses the dependency.</text>
+        <g transform="translate(0 222)">
+          <rect width="112" height="30" rx="7" fill="#312e81" stroke="#6366f1" />
+          <text x="15" y="20" fill="#e0e7ff" font-size="12">E EXPLAIN</text>
+          <text x="134" y="20" fill="#64748b" font-size="12">S SAVE</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
