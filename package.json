@@ -1,6 +1,6 @@
 {
   "name": "stackglance",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ambient developer intelligence for AI coding CLIs.",
   "repository": {
     "type": "git",
