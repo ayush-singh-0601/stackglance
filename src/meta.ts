@@ -1,2 +1,2 @@
 export const packageName = "stackglance";
-export const version = "0.1.3";
+export const version = "0.1.4";

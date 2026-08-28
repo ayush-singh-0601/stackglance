@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   classifyObservedOutput,
+  isPromptSubmission,
   observedAgentArguments,
 } from "../src/integrations/agent-command.js";
 import { deliverHookEvent } from "../src/integrations/hook-command.js";
@@ -57,5 +58,12 @@ describe("fail-open runtime recovery", () => {
       "resume",
     ]);
     expect(observedAgentArguments("claude", ["--version"])).toEqual(["--version"]);
+  });
+
+  it("recognizes an interactive prompt submission without treating typing as one", () => {
+    expect(isPromptSubmission("inspect package.json")).toBe(false);
+    expect(isPromptSubmission("\u001b[A")).toBe(false);
+    expect(isPromptSubmission("\r")).toBe(true);
+    expect(isPromptSubmission("inspect package.json\n")).toBe(true);
   });
 });

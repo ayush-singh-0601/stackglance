@@ -93,9 +93,14 @@ export async function runAgentCommand(
       env: environment,
       onOutput: (value) => enterState(classifyObservedOutput(agent, value)),
       transformInput: (value) => {
+        const transformed = controller.handleInput(value);
         busy = false;
         cancelTimer();
-        return controller.handleInput(value);
+        if (transformed !== undefined && isPromptSubmission(transformed)) {
+          busy = true;
+          timer = setTimeout(showNext, config.display.thinkingDelayMs);
+        }
+        return transformed;
       },
     });
   } catch {
@@ -114,6 +119,10 @@ export function observedAgentArguments(
 ): readonly string[] {
   if (agent !== "codex" || args.includes("--no-alt-screen")) return args;
   return ["--no-alt-screen", ...args];
+}
+
+export function isPromptSubmission(value: string): boolean {
+  return value.includes("\r") || value.includes("\n");
 }
 
 export function classifyObservedOutput(agent: AgentName, value: string): AgentState | undefined {
