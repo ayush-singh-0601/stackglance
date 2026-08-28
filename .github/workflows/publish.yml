@@ -17,6 +17,7 @@ jobs:
   publish:
     name: Publish package
     runs-on: ubuntu-latest
+    environment: "npm publish"
     timeout-minutes: 15
     steps:
       - name: Check out repository
