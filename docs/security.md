@@ -9,6 +9,7 @@ StackGlance treats news content, agent output, hook payloads, repository manifes
 - Every redirect repeats URL and DNS validation. POST requests cannot redirect.
 - Requests have time, body, redirect, and response-size limits.
 - Ollama is a separate local-only path and accepts HTTP loopback addresses only.
+- Codex live-news collection is explicit opt-in. It uses an ephemeral, read-only non-interactive run with live search, no active-chat transcript, bounded output, a timeout, daily run/token budgets, and the original publisher URL retained on every accepted item.
 
 ## Terminal boundary
 
@@ -21,6 +22,7 @@ External text is normalized and control characters are removed before rendering.
 - OpenAI keys are read from `OPENAI_API_KEY`; GitHub tokens are read from `GITHUB_TOKEN`. Neither is persisted.
 - Task text is redacted for common credential forms, bearer tokens, JWTs, emails, and local paths before relevance tagging.
 - Transcript files exposed by agent hooks are never opened.
+- Codex collector lifecycle hooks are ignored to prevent recursive StackGlance sessions.
 
 ## Availability
 

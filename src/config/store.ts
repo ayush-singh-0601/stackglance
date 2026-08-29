@@ -7,11 +7,30 @@ import { configSchema, DEFAULT_CONFIG, type StackGlanceConfig } from "./schema.j
 
 export async function loadConfig(path: string): Promise<StackGlanceConfig> {
   try {
-    return configSchema.parse(parse(await readFile(path, "utf8")));
+    return configSchema.parse(migrateLegacyConfig(parse(await readFile(path, "utf8"))));
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return structuredClone(DEFAULT_CONFIG);
     throw error;
   }
+}
+
+function migrateLegacyConfig(value: unknown): unknown {
+  if (typeof value !== "object" || value === null) return value;
+  const document = structuredClone(value) as Record<string, unknown>;
+  const sources = asRecord(document.sources);
+  const display = asRecord(document.display);
+
+  // StackGlance 0.1.5 used a 20-second cycle. Only migrate that exact legacy
+  // default so deliberately customized intervals remain untouched.
+  if (!("codexNews" in sources) && display.quietDurationMs === 12_000) {
+    display.quietDurationMs = 5_000;
+    document.display = display;
+  }
+  return document;
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : {};
 }
 
 export async function saveConfig(path: string, config: StackGlanceConfig): Promise<void> {

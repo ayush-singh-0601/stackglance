@@ -33,6 +33,7 @@ export { installOpenCodePlugin, openCodeEventToAgentEvent } from "./integrations
 export { classifyAiderOutput, installAiderIntegration } from "./integrations/aider.js";
 export type { AiderIntegrationResult } from "./integrations/aider.js";
 export { classifyObservedOutput, runAgentCommand } from "./integrations/agent-command.js";
+export { isRefreshDue } from "./integrations/agent-command.js";
 export { deliverHookEvent, runHookCommand } from "./integrations/hook-command.js";
 export { createStackGlanceHandler } from "./runtime/engine.js";
 export { sendIpcRequest, startIpcServer } from "./daemon/ipc.js";
@@ -88,6 +89,13 @@ export type { FeedCollector, FeedSource } from "./feeds/types.js";
 export { GitHubReleaseCollector } from "./feeds/github.js";
 export { OsvCollector } from "./feeds/osv.js";
 export { ArxivCollector } from "./feeds/arxiv.js";
+export { CodexNewsCollector, executeCodex, parseCodexJsonl } from "./feeds/codex-news.js";
+export type {
+  CodexExecutionRequest,
+  CodexExecutionResult,
+  CodexNewsCollectorOptions,
+  CodexUsage,
+} from "./feeds/codex-news.js";
 export { resolvePaths } from "./core/paths.js";
 export type { StackGlancePaths, PathOptions } from "./core/paths.js";
 export { runCli } from "./cli/run.js";

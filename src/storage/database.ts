@@ -2,9 +2,9 @@ import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-import type { Story } from "../core/types.js";
+import type { GlanceScope, Story } from "../core/types.js";
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 export class StackGlanceDatabase {
   readonly connection: DatabaseSync;
@@ -40,6 +40,13 @@ export class StackGlanceDatabase {
         story_id TEXT PRIMARY KEY REFERENCES stories(id) ON DELETE CASCADE,
         saved_at TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS story_impressions (
+        story_id TEXT PRIMARY KEY REFERENCES stories(id) ON DELETE CASCADE,
+        last_shown_at TEXT NOT NULL,
+        show_count INTEGER NOT NULL DEFAULT 1
+      );
+      CREATE INDEX IF NOT EXISTS story_impressions_last_shown
+        ON story_impressions(last_shown_at);
       CREATE TABLE IF NOT EXISTS metadata (
         key TEXT PRIMARY KEY,
         value TEXT NOT NULL
@@ -55,9 +62,15 @@ export class StackGlanceDatabase {
         scope, published_at, expires_at, relevance, tags_json, priority
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(id) DO UPDATE SET
+        source = excluded.source,
+        source_id = excluded.source_id,
+        url = excluded.url,
         headline = excluded.headline,
         summary = excluded.summary,
         why_it_matters = excluded.why_it_matters,
+        category = excluded.category,
+        scope = excluded.scope,
+        published_at = excluded.published_at,
         expires_at = excluded.expires_at,
         relevance = excluded.relevance,
         tags_json = excluded.tags_json,
@@ -93,10 +106,57 @@ export class StackGlanceDatabase {
   listStories(now = new Date()): Story[] {
     const rows = this.connection
       .prepare(
-        "SELECT * FROM stories WHERE expires_at > ? ORDER BY relevance DESC, published_at DESC",
+        "SELECT * FROM stories WHERE expires_at > ? ORDER BY published_at DESC, relevance DESC",
       )
       .all(now.toISOString());
     return rows.map(rowToStory);
+  }
+
+  nextStory(
+    now = new Date(),
+    excludedIds: readonly string[] = [],
+    poolSize = 40,
+    scope?: GlanceScope,
+  ): Story | undefined {
+    const exclusions = excludedIds.map(() => "?").join(", ");
+    const exclusionClause = exclusions === "" ? "" : `AND fresh.id NOT IN (${exclusions})`;
+    const row = this.connection
+      .prepare(
+        `
+        WITH fresh AS (
+          SELECT * FROM stories
+          WHERE expires_at > ? AND (? IS NULL OR scope = ?)
+          ORDER BY published_at DESC, relevance DESC
+          LIMIT ?
+        )
+        SELECT fresh.*
+        FROM fresh
+        LEFT JOIN story_impressions ON story_impressions.story_id = fresh.id
+        WHERE 1 = 1 ${exclusionClause}
+        ORDER BY
+          CASE WHEN story_impressions.story_id IS NULL THEN 0 ELSE 1 END,
+          story_impressions.last_shown_at ASC,
+          fresh.published_at DESC,
+          fresh.relevance DESC
+        LIMIT 1
+      `,
+      )
+      .get(now.toISOString(), scope ?? null, scope ?? null, Math.max(1, poolSize), ...excludedIds);
+    return row === undefined ? undefined : rowToStory(row);
+  }
+
+  markStoryShown(id: string, shownAt = new Date()): void {
+    this.connection
+      .prepare(
+        `
+        INSERT INTO story_impressions (story_id, last_shown_at, show_count)
+        VALUES (?, ?, 1)
+        ON CONFLICT(story_id) DO UPDATE SET
+          last_shown_at = excluded.last_shown_at,
+          show_count = story_impressions.show_count + 1
+      `,
+      )
+      .run(id, shownAt.toISOString());
   }
 
   getStory(id: string): Story | undefined {

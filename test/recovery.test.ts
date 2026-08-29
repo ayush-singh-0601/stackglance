@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   classifyObservedOutput,
+  isRefreshDue,
   isPromptSubmission,
   observedAgentArguments,
 } from "../src/integrations/agent-command.js";
@@ -65,5 +66,12 @@ describe("fail-open runtime recovery", () => {
     expect(isPromptSubmission("\u001b[A")).toBe(false);
     expect(isPromptSubmission("\r")).toBe(true);
     expect(isPromptSubmission("inspect package.json\n")).toBe(true);
+  });
+
+  it("refreshes missing or stale intelligence without hammering recent feeds", () => {
+    const now = new Date("2026-08-29T12:00:00.000Z");
+    expect(isRefreshDue(undefined, 30, now)).toBe(true);
+    expect(isRefreshDue("2026-08-29T11:20:00.000Z", 30, now)).toBe(true);
+    expect(isRefreshDue("2026-08-29T11:45:00.000Z", 30, now)).toBe(false);
   });
 });

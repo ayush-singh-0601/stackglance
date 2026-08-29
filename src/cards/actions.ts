@@ -12,6 +12,7 @@ export function explainStory(story: Story): string {
     "Potential impact",
     story.whyItMatters,
     "",
+    `Source: ${story.source}`,
     `Scope: ${story.scope.toUpperCase()} · Relevance: ${Math.round(story.relevance * 100)}%`,
   ];
   if (story.priority !== undefined) lines.push(`Priority: ${story.priority.toUpperCase()}`);

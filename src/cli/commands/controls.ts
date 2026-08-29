@@ -70,6 +70,26 @@ export async function setFeedWeights(
   return 0;
 }
 
+export async function setCodexNewsEnabled(
+  enabled: boolean,
+  context: CliContext,
+  io: CliIo,
+): Promise<number> {
+  await updateConfig(context.paths.config, (config) => ({
+    ...config,
+    sources: {
+      ...config.sources,
+      codexNews: { ...config.sources.codexNews, enabled },
+    },
+  }));
+  io.stdout.write(
+    enabled
+      ? "Codex live-news collection enabled (opt-in, bounded usage).\n"
+      : "Codex live-news collection disabled.\n",
+  );
+  return 0;
+}
+
 export async function showStatus(context: CliContext, io: CliIo): Promise<number> {
   const config = await loadConfig(context.paths.config);
   const detected = new Map(detectAgents().map((item) => [item.agent, item.installed]));
@@ -81,6 +101,9 @@ export async function showStatus(context: CliContext, io: CliIo): Promise<number
       `${enabled && detected.get(agent) ? "✓" : "·"} ${agent}: ${enabled ? "ON" : "OFF"}\n`,
     );
   }
-  io.stdout.write(`\nPassive intelligence: ${config.enabled ? "ON" : "OFF"}\n`);
+  io.stdout.write(
+    `\nPassive intelligence: ${config.enabled ? "ON" : "OFF"}\n` +
+      `Codex news collection: ${config.sources.codexNews.enabled ? "ON (opt-in, low-token)" : "OFF (optional)"}\n`,
+  );
   return 0;
 }

@@ -25,7 +25,7 @@ describe("runCli", () => {
   it("prints the package version", async () => {
     const output = capture();
     await expect(runCli(["--version"], output.io)).resolves.toBe(0);
-    expect(output.stdout.join("")).toBe("0.1.5\n");
+    expect(output.stdout.join("")).toBe("0.1.6\n");
   });
 
   it("uses exit code two for an unknown command", async () => {

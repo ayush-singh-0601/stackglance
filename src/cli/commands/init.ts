@@ -47,7 +47,7 @@ export async function initialize(
     io.stdout.write(`${installed ? "✓" : "·"} ${agent}${installed ? "" : " (not found)"}\n`);
   }
   io.stdout.write(
-    `\nNews sources configured.\nProject intelligence enabled.\nShell integrations: ${paths.bin}\nPassive intelligence: ON\n`,
+    `\nNews sources configured.\nProject intelligence enabled.\nShell integrations: ${paths.bin}\nPassive intelligence: ON\nCodex news collection: OFF (optional; enable with stackglance codex-news enable)\n`,
   );
   return 0;
 }

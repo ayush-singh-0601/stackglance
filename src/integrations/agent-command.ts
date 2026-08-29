@@ -4,7 +4,7 @@ import { CardInteractionController } from "../cards/interaction.js";
 import { loadConfig } from "../config/store.js";
 import type { CliContext } from "../cli/context.js";
 import type { CliIo } from "../cli/run.js";
-import type { AgentName, AgentState, Story } from "../core/types.js";
+import type { AgentName, AgentState } from "../core/types.js";
 import { findExecutable } from "../agents/detect.js";
 import { StackGlanceDatabase } from "../storage/database.js";
 import { TerminalCardOverlay } from "../terminal/overlay.js";
@@ -37,7 +37,7 @@ export async function runAgentCommand(
   const database = new StackGlanceDatabase(context.paths.database);
   let timer: NodeJS.Timeout | undefined;
   let busy = false;
-  let storyIndex = 0;
+  const shownStoryIds = new Set<string>();
   const output = process.stdout;
   let resizeAgent = (): void => undefined;
   const overlay = new TerminalCardOverlay(output, () => resizeAgent());
@@ -51,15 +51,28 @@ export async function runAgentCommand(
     if (timer !== undefined) clearTimeout(timer);
     timer = undefined;
   };
+  const requestRefreshIfDue = (): void => {
+    const currentTime = context.now();
+    const lastFetch = database.getMetadata("last_fetch");
+    if (!isRefreshDue(lastFetch, config.sources.refreshMinutes, currentTime)) return;
+    const lastRequest = database.getMetadata("refresh_requested_at");
+    if (!isRefreshDue(lastRequest, 1 / 6, currentTime)) return;
+    database.setMetadata("refresh_requested_at", currentTime.toISOString());
+    startDetachedDaemon(context, environment);
+  };
   const showNext = (): void => {
     if (!busy) return;
-    const stories = database.listStories(context.now());
-    if (stories.length === 0) {
+    const currentTime = context.now();
+    let story = database.nextStory(currentTime, [...shownStoryIds]);
+    if (story === undefined && shownStoryIds.size > 0) {
+      shownStoryIds.clear();
+      story = database.nextStory(currentTime);
+    }
+    if (story === undefined) {
+      requestRefreshIfDue();
       timer = setTimeout(showNext, Math.min(config.display.quietDurationMs, 2_000));
       return;
     }
-    const story = stories[storyIndex % stories.length] as Story;
-    storyIndex += 1;
     let card = renderCard(story, { width: output.columns ?? 80 });
     if (!overlay.show(card)) {
       card = renderCard(story, { width: output.columns ?? 80, minimal: true });
@@ -68,6 +81,8 @@ export async function runAgentCommand(
         return;
       }
     }
+    shownStoryIds.add(story.id);
+    database.markStoryShown(story.id, currentTime);
     controller.show(story);
     timer = setTimeout(() => {
       controller.hide();
@@ -109,6 +124,7 @@ export async function runAgentCommand(
         busy = false;
         cancelTimer();
         if (transformed !== undefined && isPromptSubmission(transformed)) {
+          requestRefreshIfDue();
           busy = true;
           timer = setTimeout(showNext, config.display.thinkingDelayMs);
         }
@@ -123,6 +139,16 @@ export async function runAgentCommand(
     controller.hide();
     database.close();
   }
+}
+
+export function isRefreshDue(
+  lastRefresh: string | undefined,
+  refreshMinutes: number,
+  now = new Date(),
+): boolean {
+  if (lastRefresh === undefined) return true;
+  const timestamp = Date.parse(lastRefresh);
+  return !Number.isFinite(timestamp) || now.getTime() - timestamp >= refreshMinutes * 60_000;
 }
 
 export function observedAgentArguments(
@@ -165,4 +191,17 @@ function runInherited(
     child.once("error", () => resolve(127));
     child.once("exit", (code) => resolve(code ?? 1));
   });
+}
+
+function startDetachedDaemon(context: CliContext, environment: NodeJS.ProcessEnv): void {
+  const entry = process.argv[1];
+  if (entry === undefined) return;
+  const child = spawn(process.execPath, [entry, "daemon"], {
+    cwd: context.cwd ?? process.cwd(),
+    env: environment,
+    detached: true,
+    stdio: "ignore",
+    windowsHide: true,
+  });
+  child.unref();
 }

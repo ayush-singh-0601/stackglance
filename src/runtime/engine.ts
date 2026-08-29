@@ -31,8 +31,10 @@ export function createStackGlanceHandler(
       }
       const database = new StackGlanceDatabase(paths.database);
       try {
-        const stories = database.listStories(currentTime);
-        const story = stories.find((candidate) => candidate.scope === rotation.scope) ?? stories[0];
+        const story =
+          database.nextStory(currentTime, [], 40, rotation.scope) ??
+          database.nextStory(currentTime);
+        if (story !== undefined) database.markStoryShown(story.id, currentTime);
         const decision: GlanceDecision =
           story === undefined
             ? { show: false, reason: "no cached intelligence" }

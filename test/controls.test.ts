@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   setAgentEnabled,
+  setCodexNewsEnabled,
   setFeedWeights,
   setGlobalEnabled,
   setPaused,
@@ -62,5 +63,23 @@ describe("persistent controls", () => {
     });
     await setPaused(null, context, io);
     expect((await loadConfig(context.paths.config)).pausedUntil).toBeNull();
+  });
+
+  it("requires an explicit persistent opt-in for Codex news", async () => {
+    const root = await mkdtemp(join(tmpdir(), "stackglance-codex-news-control-"));
+    const context: CliContext = {
+      paths: resolvePaths({ env: { STACKGLANCE_HOME: root } }),
+      now: () => new Date(),
+    };
+    const messages: string[] = [];
+    const io = {
+      stdout: { write: (value: string) => messages.push(value) },
+      stderr: { write: () => undefined },
+    };
+
+    expect((await loadConfig(context.paths.config)).sources.codexNews.enabled).toBe(false);
+    await setCodexNewsEnabled(true, context, io);
+    expect((await loadConfig(context.paths.config)).sources.codexNews.enabled).toBe(true);
+    expect(messages.join("")).toContain("opt-in");
   });
 });

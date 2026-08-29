@@ -20,6 +20,7 @@ export function renderCard(story: Story, options: RenderOptions = {}): RenderedC
   if (!options.minimal) {
     lines.push(...boxed(wrap(story.summary, inner), inner), empty(inner));
     lines.push(...boxed(wrap(`Why it matters: ${story.whyItMatters}`, inner), inner), empty(inner));
+    lines.push(...boxed(wrap(`Source: ${story.source}`, inner), inner), empty(inner));
     const signal =
       story.priority === undefined
         ? `Relevance: ${Math.round(story.relevance * 100)}%`

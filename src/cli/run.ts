@@ -2,6 +2,7 @@ import { AGENTS, type AgentName } from "../core/types.js";
 import { version } from "../meta.js";
 import {
   setAgentEnabled,
+  setCodexNewsEnabled,
   setFeedWeights,
   setGlobalEnabled,
   setPaused,
@@ -38,6 +39,7 @@ Commands:
   explain    Expand a StackGlance card
   save       Save a StackGlance card
   doctor     Diagnose installed integrations
+  codex-news Enable, disable, or inspect optional Codex live news
 
 Options:
   -h, --help       Show help
@@ -78,6 +80,15 @@ export async function runCli(
     return setGlobalEnabled(command === "enable", context, io);
   }
   if (command === "status") return showStatus(context, io);
+  if (command === "codex-news") {
+    const action = args[1] ?? "status";
+    if (action === "enable" || action === "disable") {
+      return setCodexNewsEnabled(action === "enable", context, io);
+    }
+    if (action === "status") return showStatus(context, io);
+    io.stderr.write("Usage: stackglance codex-news <enable|disable|status>\n");
+    return 2;
+  }
   if (command === "pause") {
     const minutesIndex = args.indexOf("--minutes");
     const minutes = minutesIndex < 0 ? 60 : Number(args[minutesIndex + 1]);

@@ -36,4 +36,23 @@ describe("StackGlanceDatabase", () => {
     expect(database.getMetadata("last_fetch")).toBe("now");
     database.close();
   });
+
+  it("rotates through the freshest pool before repeating a story", () => {
+    const database = new StackGlanceDatabase(":memory:");
+    const newer = {
+      ...story,
+      id: "story-2",
+      sourceId: "2",
+      url: "https://example.com/story-2",
+      headline: "A newer useful release arrives",
+      publishedAt: "2026-08-27T00:00:00.000Z",
+    };
+    database.upsertStories([story, newer]);
+
+    expect(database.nextStory(new Date("2026-08-28"))?.id).toBe("story-2");
+    database.markStoryShown("story-2", new Date("2026-08-28T00:00:00.000Z"));
+    expect(database.nextStory(new Date("2026-08-28"))?.id).toBe("story-1");
+    expect(database.nextStory(new Date("2026-08-28"), ["story-1"])?.id).toBe("story-2");
+    database.close();
+  });
 });

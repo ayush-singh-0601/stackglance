@@ -44,6 +44,8 @@ codex        # or: claude, gemini, opencode, aider
 
 That is the complete setup. `stackglance init` detects supported agents, creates private local state, installs the strongest available integration, and enables passive intelligence. Codex users review newly installed user hooks once through `/hooks`, following Codex's trust flow.
 
+After you submit a prompt, the first eligible card appears after 3 seconds. If the same turn remains busy, StackGlance rotates to a different card every 13 seconds (8 seconds visible, 5 seconds quiet). Prompt activity also requests a background refresh when the cache is due, so a new session does not keep restarting from the same old headline.
+
 Useful first checks:
 
 ```bash
@@ -99,6 +101,8 @@ node scripts/capture-readme-example.mjs
 | `stackglance pause --minutes 60` | Silence passive cards temporarily.              |
 | `stackglance resume`             | End quiet mode.                                 |
 | `stackglance enable` / `disable` | Control passive intelligence globally.          |
+| `stackglance codex-news enable`  | Opt in to bounded Codex-powered live news.      |
+| `stackglance codex-news disable` | Turn off Codex-powered collection.              |
 | `stackglance doctor`             | Diagnose state, storage, and integrations.      |
 
 Adjust the task/project/global mix at any time:
@@ -110,7 +114,7 @@ stackglance feed --weights 45,30,25
 ## How it works
 
 ```text
-RSS / GitHub / OSV / arXiv
+RSS / GitHub / OSV / arXiv / optional Codex live search
             │
             ▼
   normalize · deduplicate · expire
@@ -126,9 +130,21 @@ StackGlance reads local manifests such as `package.json`, `pyproject.toml`, `Car
 
 The default deterministic summarizer is API-key-free. Optional OpenAI and local Ollama summarizers are supported through configuration.
 
+### Optional Codex live news
+
+Codex collection is **off by default**. Enable it explicitly when you want StackGlance to supplement its direct feeds with recent, live-searched technology news:
+
+```bash
+stackglance codex-news enable
+stackglance codex-news status
+```
+
+This uses the installed Codex CLI's saved authentication and therefore consumes Codex usage. Each run is ephemeral and read-only, uses live web search with low reasoning effort, requests compact structured output, keeps original publisher URLs, and runs outside the active chat transcript. Defaults cap collection at 6 stories per run, 4 runs and 40,000 reported tokens per UTC day. StackGlance stops launching Codex for the rest of the day when either limit is reached. See the official [Codex non-interactive mode documentation](https://learn.chatgpt.com/docs/non-interactive-mode).
+
 ## Designed to stay out of the way
 
 - **Input-aware:** cards are hidden for typing, questions, permissions, completion, and errors.
+- **Fresh rotation:** impressions persist locally, so unseen and least-recently-shown stories are preferred instead of restarting at item one.
 - **Fail-open:** integration, daemon, IPC, or rendering failures never replace the agent's exit status.
 - **Local-first:** configuration, cached stories, and preferences stay in local state.
 - **Defensive fetching:** HTTPS allowlists, public-address validation, pinned DNS, redirect checks, timeouts, and response-size limits protect remote collection.
@@ -148,12 +164,18 @@ feed:
 display:
   thinkingDelayMs: 3000
   cardDurationMs: 8000
-  quietDurationMs: 12000
+  quietDurationMs: 5000
 summarizer:
   provider: deterministic
   model: deterministic-v1
 sources:
   refreshMinutes: 30
+  codexNews:
+    enabled: false
+    maxStories: 6
+    maxAgeHours: 72
+    maxRunsPerDay: 4
+    maxDailyTokens: 40000
 ```
 
 For OpenAI summaries, set the provider and model, then export `OPENAI_API_KEY`. For Ollama, use an HTTP loopback endpoint such as `http://127.0.0.1:11434`; non-loopback endpoints are rejected.

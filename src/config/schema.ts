@@ -2,6 +2,14 @@ import { z } from "zod";
 
 import { AGENTS } from "../core/types.js";
 
+export const DEFAULT_CODEX_NEWS_CONFIG = {
+  enabled: false,
+  maxStories: 6,
+  maxAgeHours: 72,
+  maxRunsPerDay: 4,
+  maxDailyTokens: 40_000,
+} as const;
+
 const agentFlags = Object.fromEntries(AGENTS.map((agent) => [agent, z.boolean()])) as Record<
   (typeof AGENTS)[number],
   z.ZodBoolean
@@ -41,6 +49,15 @@ export const configSchema = z.object({
       }),
     ),
     githubRepositories: z.array(z.string().regex(/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/iu)).max(50),
+    codexNews: z
+      .object({
+        enabled: z.boolean(),
+        maxStories: z.number().int().min(1).max(10),
+        maxAgeHours: z.number().int().min(12).max(168),
+        maxRunsPerDay: z.number().int().min(1).max(24),
+        maxDailyTokens: z.number().int().min(1_000).max(1_000_000),
+      })
+      .default(DEFAULT_CODEX_NEWS_CONFIG),
   }),
 });
 
@@ -52,7 +69,7 @@ export const DEFAULT_CONFIG: StackGlanceConfig = {
   pausedUntil: null,
   agents: { codex: true, claude: true, gemini: true, opencode: true, aider: true },
   feed: { task: 45, project: 30, global: 25 },
-  display: { thinkingDelayMs: 3_000, cardDurationMs: 8_000, quietDurationMs: 12_000 },
+  display: { thinkingDelayMs: 3_000, cardDurationMs: 8_000, quietDurationMs: 5_000 },
   summarizer: { provider: "deterministic", model: "deterministic-v1" },
   sources: {
     refreshMinutes: 30,
@@ -74,5 +91,6 @@ export const DEFAULT_CONFIG: StackGlanceConfig = {
       "prisma/prisma",
       "microsoft/playwright",
     ],
+    codexNews: DEFAULT_CODEX_NEWS_CONFIG,
   },
 };

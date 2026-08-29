@@ -21,6 +21,9 @@ export async function runHookCommand(
   context: CliContext,
   io: CliIo,
 ): Promise<number> {
+  // A user-enabled Codex news run is a separate, ephemeral automation. Ignore
+  // its lifecycle hooks so it cannot recursively wake StackGlance.
+  if (process.env.STACKGLANCE_CODEX_COLLECTOR === "1") return 0;
   try {
     const payload = await readHookInput();
     payload.hook_event_name ??= eventName;

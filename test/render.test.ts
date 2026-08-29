@@ -24,6 +24,7 @@ describe("terminal renderer", () => {
   it("renders a one-glance card within terminal width", () => {
     const rendered = renderCard(story, { width: 60 });
     expect(rendered.text).toContain("Why it matters:");
+    expect(rendered.text).toContain("Source: news");
     expect(rendered.text).toContain("[E] Explain");
     expect(
       rendered.text

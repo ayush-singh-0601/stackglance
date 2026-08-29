@@ -1,11 +1,15 @@
+import type { StackGlanceConfig } from "../config/schema.js";
 import { loadConfig } from "../config/store.js";
 import type { StackGlancePaths } from "../core/paths.js";
 import type { RepositoryContext, Story } from "../core/types.js";
 import { ArxivCollector } from "../feeds/arxiv.js";
+import { CodexNewsCollector, type CodexUsage } from "../feeds/codex-news.js";
 import { GitHubReleaseCollector } from "../feeds/github.js";
 import { OsvCollector } from "../feeds/osv.js";
 import { RssAtomCollector } from "../feeds/rss.js";
 import type { FeedCollector } from "../feeds/types.js";
+import { findExecutable } from "../agents/detect.js";
+import { pathWithoutShims } from "../integrations/shims.js";
 import { StackGlanceDatabase } from "../storage/database.js";
 import { DeterministicSummarizer, providerSecret, type Summarizer } from "../summaries/contract.js";
 import { OllamaSummarizer } from "../summaries/ollama.js";
@@ -75,13 +79,22 @@ export async function refreshDefaultIntelligence(
   const config = await loadConfig(paths.config);
   const repository = await detectRepository(cwd);
   const taskTags = extractTaskTags(task).tags;
+  const database = new StackGlanceDatabase(paths.database);
+  const codexCollector = createCodexCollector({
+    config: config.sources.codexNews,
+    database,
+    paths,
+    repository,
+    env,
+    now: new Date(),
+  });
   const collectors: FeedCollector[] = [
     ...config.sources.rss.map((source) => new RssAtomCollector(source)),
     new GitHubReleaseCollector(config.sources.githubRepositories, env.GITHUB_TOKEN),
     new OsvCollector(repository),
     new ArxivCollector([...taskTags, ...repository.technologies]),
+    ...(codexCollector === undefined ? [] : [codexCollector]),
   ];
-  const database = new StackGlanceDatabase(paths.database);
   try {
     return await collectAndStore({
       collectors,
@@ -94,6 +107,80 @@ export async function refreshDefaultIntelligence(
   } finally {
     database.close();
   }
+}
+
+interface CodexBudget {
+  date: string;
+  runs: number;
+  tokens: number;
+}
+
+interface CodexCollectorInput {
+  config: StackGlanceConfig["sources"]["codexNews"];
+  database: StackGlanceDatabase;
+  paths: StackGlancePaths;
+  repository: RepositoryContext;
+  env: NodeJS.ProcessEnv;
+  now: Date;
+}
+
+function createCodexCollector(input: CodexCollectorInput): FeedCollector | undefined {
+  if (!input.config.enabled) return undefined;
+  const collectorEnvironment = {
+    ...input.env,
+    PATH: pathWithoutShims(input.env.PATH, input.paths.bin),
+    STACKGLANCE_CODEX_COLLECTOR: "1",
+  };
+  const executable = findExecutable("codex", { env: collectorEnvironment });
+  if (executable === undefined) return undefined;
+
+  const budget = readCodexBudget(input.database, input.now);
+  if (budget.runs >= input.config.maxRunsPerDay || budget.tokens >= input.config.maxDailyTokens) {
+    return undefined;
+  }
+  writeCodexBudget(input.database, { ...budget, runs: budget.runs + 1 });
+  return new CodexNewsCollector({
+    executable,
+    workDirectory: input.paths.runtime,
+    technologies: input.repository.technologies,
+    maxStories: input.config.maxStories,
+    maxAgeHours: input.config.maxAgeHours,
+    env: collectorEnvironment,
+    onUsage: (usage) => recordCodexUsage(input.database, input.now, usage),
+  });
+}
+
+function readCodexBudget(database: StackGlanceDatabase, now: Date): CodexBudget {
+  const date = now.toISOString().slice(0, 10);
+  try {
+    const stored = JSON.parse(
+      database.getMetadata("codex_news_budget") ?? "{}",
+    ) as Partial<CodexBudget>;
+    if (stored.date === date) {
+      return {
+        date,
+        runs: safeCount(stored.runs),
+        tokens: safeCount(stored.tokens),
+      };
+    }
+  } catch {
+    // A malformed advisory counter is safe to replace.
+  }
+  return { date, runs: 0, tokens: 0 };
+}
+
+function recordCodexUsage(database: StackGlanceDatabase, now: Date, usage: CodexUsage): void {
+  const budget = readCodexBudget(database, now);
+  const total = usage.inputTokens + usage.outputTokens + usage.reasoningOutputTokens;
+  writeCodexBudget(database, { ...budget, tokens: budget.tokens + total });
+}
+
+function writeCodexBudget(database: StackGlanceDatabase, budget: CodexBudget): void {
+  database.setMetadata("codex_news_budget", JSON.stringify(budget));
+}
+
+function safeCount(value: unknown): number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 0 ? value : 0;
 }
 
 function selectSummarizer(
