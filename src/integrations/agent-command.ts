@@ -7,7 +7,8 @@ import type { CliIo } from "../cli/run.js";
 import type { AgentName, AgentState, Story } from "../core/types.js";
 import { findExecutable } from "../agents/detect.js";
 import { StackGlanceDatabase } from "../storage/database.js";
-import { clearRenderedCard, renderCard } from "../terminal/render.js";
+import { TerminalCardOverlay } from "../terminal/overlay.js";
+import { renderCard } from "../terminal/render.js";
 import { runObservedCommand } from "../terminal/pty.js";
 import { classifyAiderOutput } from "./aider.js";
 import { pathWithoutShims } from "./shims.js";
@@ -36,16 +37,14 @@ export async function runAgentCommand(
   const database = new StackGlanceDatabase(context.paths.database);
   let timer: NodeJS.Timeout | undefined;
   let busy = false;
-  let renderedLines = 0;
   let storyIndex = 0;
   const output = process.stdout;
+  let resizeAgent = (): void => undefined;
+  const overlay = new TerminalCardOverlay(output, () => resizeAgent());
   const controller = new CardInteractionController({
     database,
     output,
-    onHide: () => {
-      if (renderedLines > 0) output.write(clearRenderedCard(renderedLines));
-      renderedLines = 0;
-    },
+    onHide: () => overlay.hide(),
   });
 
   const cancelTimer = (): void => {
@@ -61,9 +60,14 @@ export async function runAgentCommand(
     }
     const story = stories[storyIndex % stories.length] as Story;
     storyIndex += 1;
-    const card = renderCard(story, { width: output.columns ?? 80 });
-    output.write(`\n${card.text}`);
-    renderedLines = card.lines;
+    let card = renderCard(story, { width: output.columns ?? 80 });
+    if (!overlay.show(card)) {
+      card = renderCard(story, { width: output.columns ?? 80, minimal: true });
+      if (!overlay.show(card)) {
+        timer = setTimeout(showNext, config.display.quietDurationMs);
+        return;
+      }
+    }
     controller.show(story);
     timer = setTimeout(() => {
       controller.hide();
@@ -91,7 +95,15 @@ export async function runAgentCommand(
     return await runObservedCommand(executable, observedAgentArguments(agent, args), {
       cwd: context.cwd ?? process.cwd(),
       env: environment,
-      onOutput: (value) => enterState(classifyObservedOutput(agent, value)),
+      reservedRows: () => overlay.reservedRows,
+      onStart: (control) => {
+        resizeAgent = () => control.resize();
+      },
+      onResize: () => overlay.repaint(),
+      onOutput: (value) => {
+        enterState(classifyObservedOutput(agent, value));
+        overlay.scheduleRepaint();
+      },
       transformInput: (value) => {
         const transformed = controller.handleInput(value);
         busy = false;

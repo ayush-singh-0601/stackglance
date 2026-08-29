@@ -3,6 +3,8 @@ import { EventEmitter } from "node:events";
 import { describe, expect, it } from "vitest";
 
 import {
+  childDimensions,
+  NestedTerminalOutputFilter,
   normalizePtyEnvironment,
   runObservedCommand,
   type PtyProcessLike,
@@ -11,6 +13,27 @@ import {
 describe("PTY observation", () => {
   it("drops undefined environment values", () => {
     expect(normalizePtyEnvironment({ PATH: "tools", EMPTY: undefined })).toEqual({ PATH: "tools" });
+  });
+
+  it("reserves physical terminal rows for an external overlay", () => {
+    expect(childDimensions({ columns: 120, rows: 40 }, 12)).toEqual({
+      columns: 120,
+      rows: 28,
+    });
+    expect(childDimensions({ columns: 80, rows: 10 }, 20)).toEqual({ columns: 80, rows: 1 });
+  });
+
+  it("blocks nested ConPTY resize requests without changing other output", () => {
+    const filter = new NestedTerminalOutputFilter();
+    expect(filter.push("before\u001b[8;10")).toBe("before");
+    expect(filter.push(";80tafter\u001b[2J")).toBe("after\u001b[2J");
+    expect(filter.flush()).toBe("");
+  });
+
+  it("flushes an incomplete terminal sequence instead of losing agent output", () => {
+    const filter = new NestedTerminalOutputFilter();
+    expect(filter.push("text\u001b[8;10")).toBe("text");
+    expect(filter.flush()).toBe("\u001b[8;10");
   });
 
   it("forwards terminal output without changing agent exit status", async () => {
@@ -35,9 +58,30 @@ describe("PTY observation", () => {
         return { dispose: () => undefined };
       },
     };
-    await expect(
-      runObservedCommand("agent", [], { input, output, spawn: () => child }),
-    ).resolves.toBe(7);
+    let resize: (() => void) | undefined;
+    let reservedRows = 0;
+    const childSizes: Array<[number, number]> = [];
+    child.resize = (columns, rows) => childSizes.push([columns, rows]);
+    const execution = runObservedCommand("agent", [], {
+      input,
+      output,
+      reservedRows: () => reservedRows,
+      onStart: (control) => {
+        resize = () => control.resize();
+      },
+      spawn: (_file, _args, options) => {
+        childSizes.push([options.cols, options.rows]);
+        return child;
+      },
+    });
+    reservedRows = 8;
+    resize?.();
+    await expect(execution).resolves.toBe(7);
     expect(writes).toEqual(["Thinking..."]);
+    expect(childSizes).toEqual([
+      [80, 24],
+      [80, 16],
+    ]);
+    expect(resize).toBeTypeOf("function");
   });
 });

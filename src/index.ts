@@ -10,6 +10,8 @@ export { CardInteractionController } from "./cards/interaction.js";
 export type { InteractionOptions, InteractionOutput } from "./cards/interaction.js";
 export { clearRenderedCard, renderCard, sanitizeTerminalText } from "./terminal/render.js";
 export type { RenderedCard, RenderOptions } from "./terminal/render.js";
+export { TerminalCardOverlay } from "./terminal/overlay.js";
+export type { OverlayOutput } from "./terminal/overlay.js";
 export { normalizePtyEnvironment, runObservedCommand } from "./terminal/pty.js";
 export type {
   ObservedCommandOptions,
